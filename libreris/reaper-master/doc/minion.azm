@@ -1,0 +1,322 @@
+
+
+\import{shared.zmm}
+
+\""{
+   -hsx
+   -dsx
+   -zip-factor
+   -u
+   -tri
+   -give
+}
+
+
+\set{COLOUR1}{#ffbb66}
+\set{COLOUR1}{#FFAD5C}
+\set{COLOUR2}{DarkBlue}
+
+\import{aephea/simpledocument2.zmm}
+\input{myheader}        \: inline file, found at bottom of this file.
+
+
+\<div id=asd_leftcolumn>{
+   \"asd::maketoc"
+}
+
+\<div id=asd_document_outer>{ \"asd::add-toc-start"{Start}
+\<div id=asd_document>{
+
+
+\<div class="asd_date">{\$toc_date}
+\<div class="asd_version">{minion-\finsert{../VERSION}}
+
+\<div class="asd_title">{\$title}
+\<div class="asd_subtitle">{\$subtitle}
+
+
+\sec1{syn}{Synopsis}
+
+\par{
+   Minion is a simple program for assembling sequences from
+   sequencing data using De Bruijn graphs.
+   It has two main uses.
+   }
+
+\begin{itemize}{
+   {$flow}{compact}
+   {$interitem}{1}
+   {$align}{right}
+}
+\item
+\car{
+   To infer \_3pa sequence with \v{minion\~search-adapter}.
+   This is especially useful if the experimental protocol metadata is
+   no longer associated with a \fastq file, and the \_3pa is not known.
+   A small list of candidate adapters can be cross-referenced (using
+   the sibling program \v{swan}) with a \fasta file (again small)
+   of known adapter sequences.
+   }
+
+\item
+\car{
+   To assemble the most highly expressed (small RNA) transcripts
+   with \v{minion\~assemble} as a very quick quality control.
+   The resulting \fasta file can be cross-referenced (using the sibling program \v{swan})
+   with a reference \fasta file.
+   This is foremost applicable to small RNA data, for example
+   to quickly identify highly expressed microRNAs.
+   }
+
+
+\end{itemize}
+
+\par{
+   When searching for the \_3pa without prior knowledge of the sequence,
+   \minion will output one or two candidates, accompanied with metadata and
+   selected from a longer list of candidates.
+   If the adapter sequence is known, \minion will compare this adapter
+   with all the candidates it found and output the best match.
+   }
+
+\par{
+   By default \minion expects \fastq input and will try to read two million sequences.
+   Input may have been compressed using gzip.
+   Other formats can be specified using the \opt{-record-format} option. This option
+   works the same as the identically named option in \reaper, and is
+   \lref{reaper.html#record-format}{described in the \reaper documentation}.
+   The number of input sequences read by \minion can be changed with the
+   \opt{-do}{<NUM>} option.
+   }
+
+\par{
+   To infer an adapter sequence, issue
+   }
+
+\verbatim{\:/
+   minion search-adapter -i data.fq.gz}
+
+\car{
+   To compare a known adapter sequence to a list of \minion-computed sequences, issue
+   }
+
+\verbatim{\:/
+   minion search-adapter -i data.fq.gz -adapter <SEQUENCE>}
+
+\car{
+   To compare a list of known adapter sequences in a \fasta file
+   \v{ADAPTERS.fa} to a list of \minion-computed sequences, issue
+   }
+
+\verbatim{\:/
+   minion search-adapter -i data.fq.gz -show 3 -write-fasta minion.fasta
+   swan -r ADAPTERS.fa -q minion.fasta}
+
+
+\car{
+   These modes and additional options are described in greater detail below.
+   }
+
+\sec1{description}{Description}
+
+
+\par{
+   Minion creates a De Bruijn graph from an input \fastq file specified on
+   the command line.  In its default setting it uses 12-mers. In this setting it requires relatively
+   little memory (approximately 0.6G) and is suitable for interactive use on modest computing
+   resources. For each increment in \v{k} a fourfold increase in memory is required, leading
+   to a usage of approximately 10G for 14-mers.
+   }
+
+\par{
+   Minion can be run in different modes. A mode will set several parameters that
+   influence the analysis of the De Bruijn graph. In the case of adapter analysis,
+   these are set such that the transition from adapter sequence to biological sequence
+   (reading from 3' to 5') will be detected.
+   }
+
+
+\sec1{mode-sa}{Mode search-adapter}
+
+\par{
+   When searching for adapter sequence, \minion can be run in two ways, namely \it{inference}
+   and \it{test} mode. Both work with the same set of candidate sequences (computed by
+   minion), but differ in the way in which these are ordered and presented.
+   }
+
+\par{
+   Both when infering or testing adapter sequence it is possible to show more
+   candidate sequences using the \opt{-show}{<NUM>} option.
+   }
+
+\sec2{infer-adapter}{Infering adapter sequence}
+
+\par{
+   In \it{inference} mode the candidates are ordered according to two different criteria,
+   and the best entry according to each is displayed and output. The two criteria are
+   unfortunately necessary due to the varying charachteristics of \_3pa sequence
+   in different experimental protocols. The first criterion is frequency
+   of occurrence; the second criterion incorporates a fan-out measure that captures
+   the typical characteristic of \_3pa sequence of being attached to a multitude of different
+   prefixes.
+   To infer adapter sequence from sequencing data with minion, issue the following:
+   }
+
+
+\verbatim{\:/
+   minion search-adapter -i data.fq.gz}
+
+\par{
+   To output more candidates use \opt{-show}{<num>}.
+   }
+
+\sec3{sa-write-fasta}{Writing FASTA output}
+
+\par{
+   To write \fasta output (in addition to the screen output) use \opt{-write-fasta}{<file-name>}.
+   }
+
+\sec2{test-adapter}{Testing a known adapter sequence}
+
+
+\par{
+   In \it{test} mode the user supplies a query adapter sequence on the command
+   line with the \opt{-adapter} option.
+   This sequence is compared to all candidate sequences. Minion
+   subsequently ouptputs the candidate sequence that best matches the query
+   sequence and shows the alignment between the two sequences.
+   An example invocation is this:
+   }
+
+\verbatim{\:/
+   minion search-adapter -i data.fq.gz -adapter <SEQUENCE>}
+
+\par{
+   To output more matches use \opt{-show}{<num>}.
+   To compute more candidate sequences use \opt{-N}{<num>} (the default is 50).
+   }
+
+
+\sec2{adapter-output}{Minion search-adapter output}
+
+\par{
+   Example minion output is shown below.
+   }
+
+\verbatim{\:/
+criterion=sequence-density
+sequence-density=25.68
+sequence-density-rank=1
+fanout-score=21.54
+fanout-score-rank=9
+prefix-density=49.06
+prefix-fanout=21.5
+sequence=TCGTATGCCGTCTTCTGCTTG}
+
+
+\par{
+   The \v{sequence-density} trait gives the prevalence of the infered adapter
+   as a percentage of the number of reads read.
+   For sRNA sequencing data this number will often be very high, as in the example.
+   }
+
+
+\par{
+   The \v{prefix-fanout} trait is a weighted measure that can be interpreted as
+   the number of distinct prefixes, of length three, observed with this particular
+   candidate sequence. The maximal possible value for this trait is 64.
+   The \v{prefix-density} trait is the total number
+   of these prefixes (not necessarily distinct), as a percentage of the numbers
+   of reads read.
+   }
+
+\par{
+   The \v{fanout-score} criterion is the \v{prefix-fanout} trait, multiplied
+   by the ratio of \v{prefix-density} to \v{sequence-density}, provided
+   that this ratio is larger than one.
+   }
+
+\par{
+   When infering adapters (i.e. without using \opt{-adapter})
+   two candidate sequences will be shown. The second will start
+   with the line \v{criterion=fanout-score}. The second should only be
+   considered if the first candidate is clearly a biological sequence.
+   This can be established by using one of the \sc{BLAST} interfaces
+   provided for example by \sc{NCBI} and \sc{ENSEMBL}.
+   }
+
+
+\par{
+   If the user supplies a query adapter sequence, the output is prefixed with
+   an alignment for each \minion-derived sequence, as shown below.
+   }
+
+\verbatim{\:/
+(predicted sequence)
+ TCGTATGCCGTCTTCTGCTTG
+ |||||||||||||||||||||
+ TCGTATGCCGTCTTCTGCTTGT
+(query sequence)
+---
+match-score=100
+match-count=21
+sequence-density=25.68
+sequence-density-rank=1
+fanout-score=21.54
+fanout-score-rank=9
+prefix-density=49.06
+prefix-fanout=21.5
+sequence=TCGTATGCCGTCTTCTGCTTG}
+
+
+\sec1{at}{Author/contact}
+
+\par{
+   Minion was written by Stijn van Dongen and benefited from suggestions by
+   Anton Enright and Mat Davis.  For questions and feedback send e-mail
+   to\~\~\v{kraken\~\@e{#x0040}\~ebi\~\@e{#x002E}\~ac\~\@e{#x002E}\~uk}.
+}
+
+
+\"asd::add-toc-end"{End}
+}}
+\end{simpledocument2}
+
+
+\done
+
+\={myheader}
+
+\set{COLOUR1}{#ffbb66}
+\set{COLOUR2}{DarkBlue}
+
+\begin{simpledocument2}{
+   {$toc_anchor}{Table of Contents}
+   {$day}{\system{date}{{+%e}}}
+   {$month}{\system{date}{{+%B}}}
+   {$year}{\system{date}{{+%Y}}}
+   {$toc_date}{\!$month \!$day, \!$year}
+   {$keywords}{Adapter prediction}
+   {$html_title}{Minion}
+   {$title}{Minion}
+   {$subtitle}{Adapter prediction}
+   {$author}{Stijn van Dongen}
+
+   {$css_import}{}         \: not used.
+                           \: example of usage would be {$css_import}{{url1}{url2}...{urlN}}
+   {$css_append}{
+      \zinsert{contrib/reaper2.css}
+   }
+}
+\==
+
+\begin{itemize}{
+   {$flow}{cascade}
+   {$interitem}{1}
+   {$align}{left}
+   {$class_item}{namelist}
+}
+   {flow}{compact}
+   {align}{right}
+   {mark}{\@{&ndash;}}
+   {interitem}{1}

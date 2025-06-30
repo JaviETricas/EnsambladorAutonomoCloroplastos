@@ -1,0 +1,554 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copyright (c) 2018 Stijn van Dongen -->
+<head>
+<meta name="keywords" content="Adapter prediction">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<style type="text/css">
+.slartibartfast { background-color: pink; text-decoration: blink; }
+
+   /* open base2 */
+/* start aephea.base.css */
+
+   body
+      {  text-align: justify;
+         margin-left: 0%;
+         margin-right: 0%;
+      }
+
+   a:link            { text-decoration: none; }
+   a:active          { text-decoration: none; }
+   a:visited         { text-decoration: none; }
+
+   a:link            { color: #1111aa; }
+   a:active          { color: #1111aa; }
+   a:visited         { color: #111166; }
+   a.local:link      { color: #11aa11; }
+   a.local:active    { color: #11aa11; }
+   a.local:visited   { color: #116611; }
+   a.intern:link     { color: #1111aa; }
+   a.intern:active   { color: #1111aa; }
+   a.intern:visited  { color: #111166; }
+   a.extern:link     { color: #aa1111; }
+   a.extern:active   { color: #aa1111; }
+   a.extern:visited  { color: #661111; }
+   a.quiet:link      { color: black; }
+   a.quiet:active    { color: black; }
+   a.quiet:visited   { color: black; }
+
+   p.asd_par         {  margin-bottom:0em }
+   p.asd_cpar        {  margin-bottom:0em }
+   span.asd_cpar_caption  {  font-weight: bold; display: block }
+
+   p.asd_car         {  margin-top:0em; margin-bottom:0em }
+   p.asd_ccar        {  margin-top:0em; margin-bottom:0em }
+   span.asd_ccar_caption  {  font-weight: bold; display: block }
+
+   div.verbatim
+      {  font-family: monospace;
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 2em;
+         white-space: pre;
+      }
+
+   div.indent
+      {  margin-left: 8%;
+         margin-right: 0%;
+      }
+
+   .right   { text-align: right; }
+   .left    { text-align: left; }
+   .nowrap  { white-space: nowrap; }
+
+   .item_leader 
+      {  position: relative;
+         margin-left: 8%;
+      }
+   
+   .item_compact     {  position: absolute; vertical-align: baseline; }
+   .item_cascade     {  position: relative; }
+
+   .item_leftalign   {  text-align: left; }
+
+   .item_rightalign
+      {  width: 2em;
+         text-align: right;
+      }
+   .item_compact .item_rightalign
+      {  position: absolute;
+         width: 52em;
+         right: -2em;
+         text-align: right;
+      }
+
+   .item_text
+      {  position: relative;
+         margin-left: 3em;
+      }  
+
+   .smallcaps { font-size: smaller; text-transform: uppercase }
+   .underline { text-decoration: underline }
+
+   acronym.ucase { font-size: smaller; text-transform: uppercase }
+   abbr.ucase { font-size: smaller; text-transform: uppercase }
+
+/* end aephea.base.css */
+/* close base2 */
+/* open simpledocument2 */
+/* start aephea.asd.css */
+
+   body {
+      margin:0px;
+      padding:0px;
+      border: 0px;
+   }
+
+
+   .sec_leader
+      {  margin-top: 1em;
+         margin-bottom: 0em;
+         position: relative;
+         right: 0px;
+         left: 0px;
+         top: 0px;
+      }
+
+   .sec_title
+      {  color: black;
+         position: relative;
+         margin-bottom: 0px;
+         margin-top: 0px;
+         margin-right: 5em;
+         margin-left: 5em;
+         text-align: center
+      }
+
+   .sec_num
+      {  color: black;
+         position: absolute;
+         right: 0px;
+         text-align: right;
+         width: 5em;
+         top: 0px;
+      }
+
+   .sec_lev1 { font-size: 20px; }
+   .sec_lev2 { font-size: 18px; }
+   .sec_lev3 { font-size: 16px; }
+   .sec_lev4 { font-size: 14px; }
+   .sec_lev5 { font-size: 12px; }
+   .sec_lev6 { font-size: 12px; }
+
+   .toc_toplevel
+      {  margin-top: 1em;
+      }
+
+   .toc_leader
+      {  margin-top: 0em;
+         margin-bottom: 0em;
+         position: relative;
+         right: 0px;
+         left: 0px;
+      }
+
+   .toc_title { position: relative; }
+
+   .toc_num
+      {  position: absolute;
+         text-align: left;
+         top: 0px;
+         left: 0px;
+      }
+
+   .toc_title1 { margin-left: 3em; }
+   .toc_title2 { margin-left: 6em; }
+   .toc_title3 { margin-left: 9em; }
+   .toc_title4 { margin-left: 12em; }
+
+   .toc_num1   { left: 1em; }
+   .toc_num2   { left: 3em; }
+   .toc_num3   { left: 6em; }
+   .toc_num4   { left: 9em; }
+
+   div.box { border:solid; border-width:thin; width:100%; padding:1em}
+   div.flushright { text-align: right }
+
+/* end aephea.asd.css */
+/* close simpledocument2 */
+/* open css_append */
+
+      
+
+      body { font-family: "Verdana", "Garamond", "Gill Sans", "Verdana", sans-serif; }
+
+      body
+         {  text-align: justify;
+            font-size: 10pt;
+            margin-left: 8%;
+            margin-right: 8%;
+         }
+
+      .asd_title
+         {  text-align: center;
+            font-size: 40px;
+            margin-top: 4em;
+         }
+
+      .asd_subtitle
+         {  text-align: center;
+            font-size: 25px;
+            margin-top: 1em;
+            margin-bottom: 2em;
+         }
+
+/* aephea general hooks: */
+
+      #asd_leftcolumn {
+         position: fixed;
+         text-align: left;
+width: 300px;
+overflow: auto;
+         left: 0px; top: 0px; bottom: 0px;
+
+         background-color: #ffbb66;
+         border-right:6px solid DarkBlue;
+   z-index: 138;
+      }
+
+      #asd_document_outer {
+         position: absolute;
+         top: 0px;
+left: 300px;
+width: 800px;
+         border-right:6px solid #ffbb66;
+      }
+
+      #asd_document {
+         width: 700px;
+         overflow: visible;
+         margin: 40px auto;
+   z-index: 137;
+      }
+
+      #asd_toc {
+width: 280px;
+margin: 50px auto;
+         background-color: #ffbb66;
+      }
+
+      .asd_date {
+         position: absolute;
+         right: 20px;
+         top: 20px;
+      }
+
+      .asd_version {
+         position: absolute;
+         left: 26px;
+         top: 20px;
+      }
+
+      .recipe {
+         width: 660px;
+         overflow: auto;
+         border: 3px solid red;
+         padding: 1em;
+
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 1ex;
+         font-family: courier;
+         white-space: pre;
+      }
+
+      .wordlist   {  font-size: 121%; font-style: italic; }
+      .namelist   {  font-size: 121%; }
+      .example    {  margin-left: 2em; }
+      .sec_title  {  text-align: left; margin-left: 0em; }
+      .sec_lev1   {  font-size: 30px; }
+      .sec_lev2   {  font-size: 25px; }
+      .sec_lev3   {  font-size: 20px; }
+      .toc_and_date_TOC a.intern { visibility: hidden; }
+      .sec_num    {  display: auto; }
+      .quote_attribution {  text-align: right; font-size: smaller; }
+      .smallcaps  {  font-size: smaller; text-transform: uppercase }
+                               /* .smallcaps  {  font-variant: small-caps } */
+
+      .verbatim {
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 2em;
+         font-family: courier;
+         white-space: pre;
+      }
+
+      acronym.ucase, abbr.ucase {
+         font-size: smaller;
+         text-transform: uppercase;
+         text-decoration: none;
+         border-style: none;
+      }
+
+
+   
+/* close css_append */
+</style>
+<title>Minion</title>
+</head>
+<body>
+<div id=asd_leftcolumn>
+<div id=asd_toc>
+<div class="toc_toplevel">
+<a name="thetoc"></a>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a class="intern" href="#asd_body_start">Start</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_asd_body_start"></a><a class="intern" href="#asd_body_start">&nbsp;</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc1">1</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_syn"></a><a class="intern" href="#syn">Synopsis</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc2">2</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_description"></a><a class="intern" href="#description">Description</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc3">3</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_mode-sa"></a><a class="intern" href="#mode-sa">Mode search-adapter</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">3.1.</div>
+<div class="toc_title toc_title2"><a name="toc_infer-adapter"></a><a class="intern" href="#infer-adapter">Infering adapter sequence</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num3">3.1.1.</div>
+<div class="toc_title toc_title3"><a name="toc_sa-write-fasta"></a><a class="intern" href="#sa-write-fasta">Writing FASTA output</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">3.2.</div>
+<div class="toc_title toc_title2"><a name="toc_test-adapter"></a><a class="intern" href="#test-adapter">Testing a known adapter sequence</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">3.3.</div>
+<div class="toc_title toc_title2"><a name="toc_adapter-output"></a><a class="intern" href="#adapter-output">Minion search-adapter output</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc4">4</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_at"></a><a class="intern" href="#at">Author/contact</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a class="intern" href="#asd_body_end">End</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_asd_body_end"></a><a class="intern" href="#asd_body_end">&nbsp;</a></div>
+</div>
+</div>
+</div>
+</div>
+<div id=asd_document_outer>
+<a name="asd_body_start"></a>
+<div id=asd_document>
+<div class="asd_date">May 11, 2018</div>
+<div class="asd_version">minion-17-257
+</div>
+<div class="asd_title">Minion</div>
+<div class="asd_subtitle">Adapter prediction</div>
+
+<a name="syn"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#syn">Synopsis</a></div><div class="sec_num"><a class="intern" href="#toc1"><span class="sec_num">1</span></a></div></div>
+<p class="asd_par">
+Minion is a simple program for assembling sequences from
+sequencing data using De Bruijn graphs.
+It has two main uses.
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+To infer <i>3'&nbsp;adapter</i> sequence with <tt>minion&nbsp;search-adapter</tt>.
+This is especially useful if the experimental protocol metadata is
+no longer associated with a <span class="smallcaps">FASTQ</span> file, and the <i>3'&nbsp;adapter</i> is not known.
+A small list of candidate adapters can be cross-referenced (using
+the sibling program <tt>swan</tt>) with a <span class="smallcaps">FASTA</span> file (again small)
+of known adapter sequences.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+To assemble the most highly expressed (small RNA) transcripts
+with <tt>minion&nbsp;assemble</tt> as a very quick quality control.
+The resulting <span class="smallcaps">FASTA</span> file can be cross-referenced (using the sibling program <tt>swan</tt>)
+with a reference <span class="smallcaps">FASTA</span> file.
+This is foremost applicable to small RNA data, for example
+to quickly identify highly expressed microRNAs.
+</p>
+</div>
+</div>
+<p class="asd_par">
+When searching for the <i>3'&nbsp;adapter</i> without prior knowledge of the sequence,
+<i>minion</i> will output one or two candidates, accompanied with metadata and
+selected from a longer list of candidates.
+If the adapter sequence is known, <i>minion</i> will compare this adapter
+with all the candidates it found and output the best match.
+</p>
+<p class="asd_par">
+By default <i>minion</i> expects <span class="smallcaps">FASTQ</span> input and will try to read two million sequences.
+Input may have been compressed using gzip.
+Other formats can be specified using the <tt>-record-format</tt> option. This option
+works the same as the identically named option in <i>reaper</i>, and is
+<a class="local" href="reaper.html#record-format">described in the <i>reaper</i> documentation</a>.
+The number of input sequences read by <i>minion</i> can be changed with the
+<tt>-do</tt>&nbsp;<tt>&lt;NUM&gt;</tt> option.
+</p>
+<p class="asd_par">
+To infer an adapter sequence, issue
+</p>
+<div class="verbatim">   minion search-adapter -i data.fq.gz</div>
+<p class="asd_car">
+To compare a known adapter sequence to a list of <i>minion</i>-computed sequences, issue
+</p>
+<div class="verbatim">   minion search-adapter -i data.fq.gz -adapter &lt;SEQUENCE&gt;</div>
+<p class="asd_car">
+To compare a list of known adapter sequences in a <span class="smallcaps">FASTA</span> file
+<tt>ADAPTERS.fa</tt> to a list of <i>minion</i>-computed sequences, issue
+</p>
+<div class="verbatim">   minion search-adapter -i data.fq.gz -show 3 -write-fasta minion.fasta
+   swan -r ADAPTERS.fa -q minion.fasta</div>
+<p class="asd_car">
+These modes and additional options are described in greater detail below.
+</p>
+
+<a name="description"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#description">Description</a></div><div class="sec_num"><a class="intern" href="#toc2"><span class="sec_num">2</span></a></div></div>
+<p class="asd_par">
+Minion creates a De Bruijn graph from an input <span class="smallcaps">FASTQ</span> file specified on
+the command line. In its default setting it uses 12-mers. In this setting it requires relatively
+little memory (approximately 0.6G) and is suitable for interactive use on modest computing
+resources. For each increment in <tt>k</tt> a fourfold increase in memory is required, leading
+to a usage of approximately 10G for 14-mers.
+</p>
+<p class="asd_par">
+Minion can be run in different modes. A mode will set several parameters that
+influence the analysis of the De Bruijn graph. In the case of adapter analysis,
+these are set such that the transition from adapter sequence to biological sequence
+(reading from 3' to 5') will be detected.
+</p>
+
+<a name="mode-sa"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#mode-sa">Mode search-adapter</a></div><div class="sec_num"><a class="intern" href="#toc3"><span class="sec_num">3</span></a></div></div>
+<p class="asd_par">
+When searching for adapter sequence, <i>minion</i> can be run in two ways, namely <i>inference</i>
+and <i>test</i> mode. Both work with the same set of candidate sequences (computed by
+minion), but differ in the way in which these are ordered and presented.
+</p>
+<p class="asd_par">
+Both when infering or testing adapter sequence it is possible to show more
+candidate sequences using the <tt>-show</tt>&nbsp;<tt>&lt;NUM&gt;</tt> option.
+</p>
+
+<a name="infer-adapter"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#infer-adapter">Infering adapter sequence</a></div><div class="sec_num"><a class="intern" href="#toc3"><span class="sec_num">3.1</span></a></div></div>
+<p class="asd_par">
+In <i>inference</i> mode the candidates are ordered according to two different criteria,
+and the best entry according to each is displayed and output. The two criteria are
+unfortunately necessary due to the varying charachteristics of <i>3'&nbsp;adapter</i> sequence
+in different experimental protocols. The first criterion is frequency
+of occurrence; the second criterion incorporates a fan-out measure that captures
+the typical characteristic of <i>3'&nbsp;adapter</i> sequence of being attached to a multitude of different
+prefixes.
+To infer adapter sequence from sequencing data with minion, issue the following:
+</p>
+<div class="verbatim">   minion search-adapter -i data.fq.gz</div>
+<p class="asd_par">
+To output more candidates use <tt>-show</tt>&nbsp;<tt>&lt;num&gt;</tt>.
+</p>
+
+<a name="sa-write-fasta"></a><div class="sec_leader sec_lev3"><div class="sec_title"><a class="intern" href="#sa-write-fasta">Writing FASTA output</a></div><div class="sec_num"><a class="intern" href="#toc3"><span class="sec_num">3.1.1</span></a></div></div>
+<p class="asd_par">
+To write <span class="smallcaps">FASTA</span> output (in addition to the screen output) use <tt>-write-fasta</tt>&nbsp;<tt>&lt;file-name&gt;</tt>.
+</p>
+
+<a name="test-adapter"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#test-adapter">Testing a known adapter sequence</a></div><div class="sec_num"><a class="intern" href="#toc3"><span class="sec_num">3.2</span></a></div></div>
+<p class="asd_par">
+In <i>test</i> mode the user supplies a query adapter sequence on the command
+line with the <tt>-adapter</tt> option.
+This sequence is compared to all candidate sequences. Minion
+subsequently ouptputs the candidate sequence that best matches the query
+sequence and shows the alignment between the two sequences.
+An example invocation is this:
+</p>
+<div class="verbatim">   minion search-adapter -i data.fq.gz -adapter &lt;SEQUENCE&gt;</div>
+<p class="asd_par">
+To output more matches use <tt>-show</tt>&nbsp;<tt>&lt;num&gt;</tt>.
+To compute more candidate sequences use <tt>-N</tt>&nbsp;<tt>&lt;num&gt;</tt> (the default is 50).
+</p>
+
+<a name="adapter-output"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#adapter-output">Minion search-adapter output</a></div><div class="sec_num"><a class="intern" href="#toc3"><span class="sec_num">3.3</span></a></div></div>
+<p class="asd_par">
+Example minion output is shown below.
+</p>
+<div class="verbatim">criterion=sequence-density
+sequence-density=25.68
+sequence-density-rank=1
+fanout-score=21.54
+fanout-score-rank=9
+prefix-density=49.06
+prefix-fanout=21.5
+sequence=TCGTATGCCGTCTTCTGCTTG</div>
+<p class="asd_par">
+The <tt>sequence-density</tt> trait gives the prevalence of the infered adapter
+as a percentage of the number of reads read.
+For sRNA sequencing data this number will often be very high, as in the example.
+</p>
+<p class="asd_par">
+The <tt>prefix-fanout</tt> trait is a weighted measure that can be interpreted as
+the number of distinct prefixes, of length three, observed with this particular
+candidate sequence. The maximal possible value for this trait is 64.
+The <tt>prefix-density</tt> trait is the total number
+of these prefixes (not necessarily distinct), as a percentage of the numbers
+of reads read.
+</p>
+<p class="asd_par">
+The <tt>fanout-score</tt> criterion is the <tt>prefix-fanout</tt> trait, multiplied
+by the ratio of <tt>prefix-density</tt> to <tt>sequence-density</tt>, provided
+that this ratio is larger than one.
+</p>
+<p class="asd_par">
+When infering adapters (i.e. without using <tt>-adapter</tt>)
+two candidate sequences will be shown. The second will start
+with the line <tt>criterion=fanout-score</tt>. The second should only be
+considered if the first candidate is clearly a biological sequence.
+This can be established by using one of the <span class="smallcaps">BLAST</span> interfaces
+provided for example by <span class="smallcaps">NCBI</span> and <span class="smallcaps">ENSEMBL</span>.
+</p>
+<p class="asd_par">
+If the user supplies a query adapter sequence, the output is prefixed with
+an alignment for each <i>minion</i>-derived sequence, as shown below.
+</p>
+<div class="verbatim">(predicted sequence)
+ TCGTATGCCGTCTTCTGCTTG
+ |||||||||||||||||||||
+ TCGTATGCCGTCTTCTGCTTGT
+(query sequence)
+---
+match-score=100
+match-count=21
+sequence-density=25.68
+sequence-density-rank=1
+fanout-score=21.54
+fanout-score-rank=9
+prefix-density=49.06
+prefix-fanout=21.5
+sequence=TCGTATGCCGTCTTCTGCTTG</div>
+
+<a name="at"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#at">Author/contact</a></div><div class="sec_num"><a class="intern" href="#toc4"><span class="sec_num">4</span></a></div></div>
+<p class="asd_par">
+Minion was written by Stijn van Dongen and benefited from suggestions by
+Anton Enright and Mat Davis. For questions and feedback send e-mail
+to&nbsp;&nbsp;<tt>kraken&nbsp;&#x0040;&nbsp;ebi&nbsp;&#x002E;&nbsp;ac&nbsp;&#x002E;&nbsp;uk</tt>.
+</p>
+<a name="asd_body_end"></a>
+</div></div>
+</body>
+</html>

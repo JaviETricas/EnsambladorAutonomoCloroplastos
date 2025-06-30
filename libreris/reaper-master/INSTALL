@@ -1,0 +1,18 @@
+
+Change directory to 'src', then type 'make':
+
+   cd src
+   make
+
+This should create four binaries, namely
+
+   reaper   (read trimming, filtering, demultiplexing)
+   tally    (deduplication of reads, re-pairing independently paired end reads)
+   minion   (adapter inference from sequence files)
+   swan     (simple local alignments)
+
+Copy them to a place in your $PATH, or execute them by using a fully
+qualified path.
+
+If you have trouble please contact kraken 'at' ebi 'dot' ac 'dot' uk.
+

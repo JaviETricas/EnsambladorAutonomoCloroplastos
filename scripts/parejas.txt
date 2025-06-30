@@ -1,0 +1,1 @@
+/GDMV/sbcc_exome_cnag_rawdata/20131209/C2LR8ACXX_7_11_1.fastq.gz,/GDMV/sbcc_exome_cnag_rawdata/20131209/C2LR8ACXX_7_11_2.fastq.gz

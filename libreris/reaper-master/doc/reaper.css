@@ -1,0 +1,117 @@
+\vanish{
+   \set{{modes}{v}}{}{
+      {COLOUR1}{pink}
+      {COLOUR2}{green}
+   }
+}
+
+      body { font-family: "Verdana", "Garamond", "Gill Sans", "Verdana", sans-serif; }
+
+      body
+         {  text-align: justify;
+            font-size: 10pt;
+         }
+
+      .asd_title
+         {  text-align: center;
+            font-size: 40px;
+            margin-top: 4em;
+         }
+
+      .asd_subtitle
+         {  text-align: center;
+            font-size: 25px;
+            margin-top: 1em;
+            margin-bottom: 2em;
+         }
+
+/* aephea general hooks: */
+
+      #asd_leftcolumn {
+         position: fixed;
+         text-align: left;
+width: 300px;
+overflow: auto;
+         left: 0px; top: 0px; bottom: 0px;
+
+         background-color: \COLOUR1;
+         border-right:6px solid \COLOUR2;
+   z-index: 138;
+      }
+
+      #asd_document_outer {
+         position: absolute;
+         top: 0px;
+left: 300px;
+width: 800px;
+         border-right:6px solid \COLOUR1;
+      }
+
+      #asd_document {
+         width: 700px;
+         overflow: visible;
+         margin: 40px auto;
+   z-index: 137;
+      }
+
+      #asd_toc {
+width: 280px;
+margin: 50px auto;
+         background-color: \COLOUR1;
+      }
+
+      .asd_date {
+         position: absolute;
+         right: 20px;
+         top: 20px;
+      }
+
+      .asd_version {
+         position: absolute;
+         left: 26px;
+         top: 20px;
+      }
+
+      .recipe {
+         width: 660px;
+         overflow: auto;
+         border: 3px solid red;
+         padding: 1em;
+
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 1ex;
+         font-family: courier;
+         white-space: pre;
+      }
+
+      .wordlist   {  font-size: 121%; font-style: italic; }
+      .namelist   {  font-size: 121%; }
+      .example    {  margin-left: 2em; }
+      .sec_title  {  text-align: left; margin-left: 0em; }
+      .sec_lev1   {  font-size: 30px; }
+      .sec_lev2   {  font-size: 25px; }
+      .sec_lev3   {  font-size: 20px; }
+      .toc_and_date_TOC a.intern { visibility: hidden; }
+      .sec_num    {  display: auto; }
+      .quote_attribution {  text-align: right; font-size: smaller; }
+      .smallcaps  {  font-size: smaller; text-transform: uppercase }
+
+
+      .verbatim {
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 2em;
+         font-family: courier;
+         white-space: pre;
+      }
+
+      acronym.ucase, abbr.ucase {
+         font-size: smaller;
+         text-transform: uppercase;
+         text-decoration: none;
+         border-style: none;
+      }
+

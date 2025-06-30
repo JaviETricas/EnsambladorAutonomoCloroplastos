@@ -1,0 +1,65 @@
+
+
+15-065
+
+   *  When --no-tally is supplied (to re-pair paired end files) the option
+      --with-quality is now automatically turned on as well.
+
+13-274
+13-231
+
+   *  Tally would hang indefinitely on very small input files, due
+      to a missed check on unrealistically small hash sizes. The hang
+      was caused by a hash of size one - fixed.
+
+   *  Use -dsd NUM (data size delta) to change data size parameter.
+      This is in log scale relative to the default estimated parameter.
+      Use e.g. 1 or 2 to double or quadruple chunk sizes, use e.g. -1 or
+      -2 to halve or quarter them.
+
+   *  Use -hsd NUM (hash size delta) to change hash size parameter.
+      This is in log scale relative to the default estimated parameter.
+      Use e.g. 1 or 2 to double or quadruple hash sizes, use e.g. -1 or
+      -2 to halve or quarter them.
+
+   *  Change default parameters so that memory usage is reduced.
+
+   *  Additionally output nucleotide counts in sumstat.
+
+
+13-013
+
+   *  Various clean-ups of the implementation.
+
+   *  In paired end mode Tally would not distinguish between
+         left  right
+         A     CA
+         AC    A
+      - they would result in {A, CA} counted twice, due to the
+      fact that the pairs were simply concatenated when hashing.
+      This is now mitigated to a large extent by introducing an 'N'
+      as separator. Surplus collation could still happen, e.g. with
+         A     NCA
+         AN    CA
+
+   *  For a combination of very large data with large hash arrays tally was buggy,
+      as hash sizes can grow beyond 4G.  First bug in the wild spotted by Mat Davis.
+      Fixed.
+
+
+12-083
+
+   %q<CHARACTER> directive
+      will create a quality score of the appropriate length using CHARACTER.
+
+   --pair-by-offset option
+      will tally two files without requiring record offset information to be present.
+      The files will be matched offset by offset. If string identifiers are present
+      (read with the %I directive) they will be tested for identity.
+
+   --no-tally option
+      will output records as they are read.
+      Intended mostly for re-pairing paired end files that have been processed e.g. by reaper.
+      Note: different / more limited output syntax.
+
+

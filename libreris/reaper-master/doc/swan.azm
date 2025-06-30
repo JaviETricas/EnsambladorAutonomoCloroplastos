@@ -1,0 +1,164 @@
+
+
+
+
+\import{shared.zmm}
+
+
+\set{COLOUR1}{#ffbb66}
+\set{COLOUR1}{#FFAD5C}
+\set{COLOUR2}{DarkBlue}
+
+\import{aephea/simpledocument2.zmm}
+\input{myheader}        \: inline file, found at bottom of this file.
+
+
+\<div id=asd_leftcolumn>{
+   \"asd::maketoc"
+}
+
+\<div id=asd_document_outer>{ \"asd::add-toc-start"{Start}
+\<div id=asd_document>{
+
+
+\<div class="asd_date">{\$toc_date}
+\<div class="asd_version">{swan-\finsert{../VERSION}}
+
+\<div class="asd_title">{\$title}
+\<div class="asd_subtitle">{\$subtitle}
+
+
+\sec1{syn}{Synopsis}
+
+\par{
+   Swan is a simple program for computing local alignments in short DNA sequences
+   using the Smith-Waterman algorithm.
+   It can 1) align two sequences specified on the command line 2)
+   find the best matching sequences in a reference \fasta file for a single query sequence
+   or 3) find the best matching sequences between a reference and a query \fasta file.
+   }
+
+\par{
+   Swan allows changing of alignment parameters, dumping of the alignment matrix, and output
+   of alternate alignments. It can be sped up by requiring matches
+   to have at least one k-mer perfectly aligning with the \opt{-index} option. Logical key-value
+   formatted output is obtained with the \opt{--key-value} option.
+   }
+
+
+\sec1{description}{Description}
+
+\begin{itemize}{
+   {$flow}{cascade}
+   {$interitem}{1}
+   {$align}{left}
+   {$class_item}{namelist}
+}
+
+\item{\opt{-o}{<fname>}}
+\car{Output file name, default STDOUT.}
+
+\item{\opt{-rs}{<DNA>}}
+\car{Reference DNA sequence.}
+
+\item{\opt{-qs}{<DNA>}}
+\car{Query DNA sequence.}
+
+\item{\opt{-r}{<DNA>}}
+\car{Reference DNA \fasta file.}
+
+\item{\opt{-q}{<DNA>}}
+\car{Query DNA \fasta file.}
+
+
+\items{
+   {\opt{-q-len}{<int>}}
+   {\opt{-r-len}{<int>}}
+}
+\car{Consider only sequences at least as long as specified,
+for query and reference respectively.}
+
+
+\items{
+   {\opt{-q-string}{<string>}}
+   {\opt{-r-string}{<string>}}
+}
+\car{Consider only sequences from query or reference respectively,
+for which the identifier matches \usearg{<string>}. Only exact matches
+are supported - no regular expressions.}
+
+
+\item{\opt{-id}{<num>}}
+\car{Display matches with at least \usearg{<num>} identity (in range \v{0-100}).}
+
+\item{\opt{-index}{<num>}}
+\car{Require stretch of \usearg{<num>} matches. The purpose of this is to speed
+up queries, and hence this will require the argument to be in the range of \v{8-12}
+in order to be useful.}
+
+\item{\opt{-swp}{MATCH/SUBSTITUTION/GAP}}
+\car{Set the Smith-Waterman gain for matches and penalties for subtitutions and gaps.}
+
+\item{\opt{--noindel}}
+\car{Do not consider alignments with gaps.}
+
+\item{\opt{--matrix}}
+\car{Dump the alignment matrix.}
+
+\item{\opt{-cell}{<num>}}
+\car{Trace the alignment from this matrix cell.}
+
+\item{\opt{-do}{<num>}}
+\car{Process the top \usearg{<num>} entries from the reference file.}
+
+\item{\opt{--key-value}}
+\car{Write a logical key-value ouput format.}
+
+\item{\opt{--excise}}
+\car{Print only the aligned part of the sequence alignment, omit flanking sequences.}
+
+\end{itemize}
+
+
+\"asd::add-toc-end"{End}
+}}
+\end{simpledocument2}
+
+
+\done
+
+\={myheader}
+
+\set{COLOUR1}{#ffbb66}
+\set{COLOUR2}{DarkBlue}
+
+\begin{simpledocument2}{
+   {$toc_anchor}{Table of Contents}
+   {$day}{\system{date}{{+%e}}}
+   {$month}{\system{date}{{+%B}}}
+   {$year}{\system{date}{{+%Y}}}
+   {$toc_date}{\!$month \!$day, \!$year}
+   {$keywords}{Adapter prediction}
+   {$html_title}{Swan}
+   {$title}{Swan}
+   {$subtitle}{Smith-Waterman Aligment}
+   {$author}{Stijn van Dongen}
+
+   {$css_import}{}         \: not used.
+                           \: example of usage would be {$css_import}{{url1}{url2}...{urlN}}
+   {$css_append}{
+      \zinsert{contrib/reaper2.css}
+   }
+}
+\==
+
+\begin{itemize}{
+   {$flow}{cascade}
+   {$interitem}{1}
+   {$align}{left}
+   {$class_item}{namelist}
+}
+   {flow}{compact}
+   {align}{right}
+   {mark}{\@{&ndash;}}
+   {interitem}{1}

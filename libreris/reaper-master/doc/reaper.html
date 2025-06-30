@@ -1,0 +1,1609 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copyright (c) 2018 Stijn van Dongen -->
+<head>
+<meta name="keywords" content="short read sequence data filtering">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<style type="text/css">
+.slartibartfast { background-color: pink; text-decoration: blink; }
+
+   /* open base2 */
+/* start aephea.base.css */
+
+   body
+      {  text-align: justify;
+         margin-left: 0%;
+         margin-right: 0%;
+      }
+
+   a:link            { text-decoration: none; }
+   a:active          { text-decoration: none; }
+   a:visited         { text-decoration: none; }
+
+   a:link            { color: #1111aa; }
+   a:active          { color: #1111aa; }
+   a:visited         { color: #111166; }
+   a.local:link      { color: #11aa11; }
+   a.local:active    { color: #11aa11; }
+   a.local:visited   { color: #116611; }
+   a.intern:link     { color: #1111aa; }
+   a.intern:active   { color: #1111aa; }
+   a.intern:visited  { color: #111166; }
+   a.extern:link     { color: #aa1111; }
+   a.extern:active   { color: #aa1111; }
+   a.extern:visited  { color: #661111; }
+   a.quiet:link      { color: black; }
+   a.quiet:active    { color: black; }
+   a.quiet:visited   { color: black; }
+
+   p.asd_par         {  margin-bottom:0em }
+   p.asd_cpar        {  margin-bottom:0em }
+   span.asd_cpar_caption  {  font-weight: bold; display: block }
+
+   p.asd_car         {  margin-top:0em; margin-bottom:0em }
+   p.asd_ccar        {  margin-top:0em; margin-bottom:0em }
+   span.asd_ccar_caption  {  font-weight: bold; display: block }
+
+   div.verbatim
+      {  font-family: monospace;
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 2em;
+         white-space: pre;
+      }
+
+   div.indent
+      {  margin-left: 8%;
+         margin-right: 0%;
+      }
+
+   .right   { text-align: right; }
+   .left    { text-align: left; }
+   .nowrap  { white-space: nowrap; }
+
+   .item_leader 
+      {  position: relative;
+         margin-left: 8%;
+      }
+   
+   .item_compact     {  position: absolute; vertical-align: baseline; }
+   .item_cascade     {  position: relative; }
+
+   .item_leftalign   {  text-align: left; }
+
+   .item_rightalign
+      {  width: 2em;
+         text-align: right;
+      }
+   .item_compact .item_rightalign
+      {  position: absolute;
+         width: 52em;
+         right: -2em;
+         text-align: right;
+      }
+
+   .item_text
+      {  position: relative;
+         margin-left: 3em;
+      }  
+
+   .smallcaps { font-size: smaller; text-transform: uppercase }
+   .underline { text-decoration: underline }
+
+   acronym.ucase { font-size: smaller; text-transform: uppercase }
+   abbr.ucase { font-size: smaller; text-transform: uppercase }
+
+/* end aephea.base.css */
+/* close base2 */
+/* open simpledocument2 */
+/* start aephea.asd.css */
+
+   body {
+      margin:0px;
+      padding:0px;
+      border: 0px;
+   }
+
+
+   .sec_leader
+      {  margin-top: 1em;
+         margin-bottom: 0em;
+         position: relative;
+         right: 0px;
+         left: 0px;
+         top: 0px;
+      }
+
+   .sec_title
+      {  color: black;
+         position: relative;
+         margin-bottom: 0px;
+         margin-top: 0px;
+         margin-right: 5em;
+         margin-left: 5em;
+         text-align: center
+      }
+
+   .sec_num
+      {  color: black;
+         position: absolute;
+         right: 0px;
+         text-align: right;
+         width: 5em;
+         top: 0px;
+      }
+
+   .sec_lev1 { font-size: 20px; }
+   .sec_lev2 { font-size: 18px; }
+   .sec_lev3 { font-size: 16px; }
+   .sec_lev4 { font-size: 14px; }
+   .sec_lev5 { font-size: 12px; }
+   .sec_lev6 { font-size: 12px; }
+
+   .toc_toplevel
+      {  margin-top: 1em;
+      }
+
+   .toc_leader
+      {  margin-top: 0em;
+         margin-bottom: 0em;
+         position: relative;
+         right: 0px;
+         left: 0px;
+      }
+
+   .toc_title { position: relative; }
+
+   .toc_num
+      {  position: absolute;
+         text-align: left;
+         top: 0px;
+         left: 0px;
+      }
+
+   .toc_title1 { margin-left: 3em; }
+   .toc_title2 { margin-left: 6em; }
+   .toc_title3 { margin-left: 9em; }
+   .toc_title4 { margin-left: 12em; }
+
+   .toc_num1   { left: 1em; }
+   .toc_num2   { left: 3em; }
+   .toc_num3   { left: 6em; }
+   .toc_num4   { left: 9em; }
+
+   div.box { border:solid; border-width:thin; width:100%; padding:1em}
+   div.flushright { text-align: right }
+
+/* end aephea.asd.css */
+/* close simpledocument2 */
+/* open css_append */
+
+      
+
+      body { font-family: "Verdana", "Garamond", "Gill Sans", "Verdana", sans-serif; }
+
+      body
+         {  text-align: justify;
+            font-size: 10pt;
+            margin-left: 8%;
+            margin-right: 8%;
+         }
+
+      .asd_title
+         {  text-align: center;
+            font-size: 40px;
+            margin-top: 4em;
+         }
+
+      .asd_subtitle
+         {  text-align: center;
+            font-size: 25px;
+            margin-top: 1em;
+            margin-bottom: 2em;
+         }
+
+/* aephea general hooks: */
+
+      #asd_leftcolumn {
+         position: fixed;
+         text-align: left;
+width: 300px;
+overflow: auto;
+         left: 0px; top: 0px; bottom: 0px;
+
+         background-color: #FFAD5C;
+         border-right:6px solid DarkBlue;
+   z-index: 138;
+      }
+
+      #asd_document_outer {
+         position: absolute;
+         top: 0px;
+left: 300px;
+width: 800px;
+         border-right:6px solid #FFAD5C;
+      }
+
+      #asd_document {
+         width: 700px;
+         overflow: visible;
+         margin: 40px auto;
+   z-index: 137;
+      }
+
+      #asd_toc {
+width: 280px;
+margin: 50px auto;
+         background-color: #FFAD5C;
+      }
+
+      .asd_date {
+         position: absolute;
+         right: 20px;
+         top: 20px;
+      }
+
+      .asd_version {
+         position: absolute;
+         left: 26px;
+         top: 20px;
+      }
+
+      .recipe {
+         width: 660px;
+         overflow: auto;
+         border: 3px solid red;
+         padding: 1em;
+
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 1ex;
+         font-family: courier;
+         white-space: pre;
+      }
+
+      .wordlist   {  font-size: 121%; font-style: italic; }
+      .namelist   {  font-size: 121%; }
+      .example    {  margin-left: 2em; }
+      .sec_title  {  text-align: left; margin-left: 0em; }
+      .sec_lev1   {  font-size: 30px; }
+      .sec_lev2   {  font-size: 25px; }
+      .sec_lev3   {  font-size: 20px; }
+      .toc_and_date_TOC a.intern { visibility: hidden; }
+      .sec_num    {  display: auto; }
+      .quote_attribution {  text-align: right; font-size: smaller; }
+      .smallcaps  {  font-size: smaller; text-transform: uppercase }
+                               /* .smallcaps  {  font-variant: small-caps } */
+
+      .verbatim {
+         margin-top: 1em;
+         margin-bottom: 1em;
+         font-size: 10pt;
+         margin-left: 2em;
+         font-family: courier;
+         white-space: pre;
+      }
+
+      acronym.ucase, abbr.ucase {
+         font-size: smaller;
+         text-transform: uppercase;
+         text-decoration: none;
+         border-style: none;
+      }
+
+
+   
+/* close css_append */
+</style>
+<title>Reaper</title>
+</head>
+<body>
+<div id=asd_leftcolumn>
+<div id=asd_toc>
+<div class="toc_toplevel">
+<a name="thetoc"></a>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a class="intern" href="#asd_body_start">Start</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_asd_body_start"></a><a class="intern" href="#asd_body_start">&nbsp;</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc1">1</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_syn"></a><a class="intern" href="#syn">Synopsis</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc2">2</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_gs"></a><a class="intern" href="#gs">Getting started</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc3">3</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_gr"></a><a class="intern" href="#gr">Read geometry</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc4">4</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_alnbeh"></a><a class="intern" href="#alnbeh">Matching the read geometry</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc5">5</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_alnbeh2"></a><a class="intern" href="#alnbeh2">Alignment tests</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc6">6</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_alnreq"></a><a class="intern" href="#alnreq">Alignment test specification</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc7">7</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_geom"></a><a class="intern" href="#geom">Geometry-dependent read processing</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">7.1.</div>
+<div class="toc_title toc_title2"><a name="toc_nobc"></a><a class="intern" href="#nobc">Geometries without barcode (-geom no-bc)</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">7.2.</div>
+<div class="toc_title toc_title2"><a name="toc_3pbc"></a><a class="intern" href="#3pbc">Geometries with a 3' barcode (-geom 3p-bc)</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">7.3.</div>
+<div class="toc_title toc_title2"><a name="toc_5pbc"></a><a class="intern" href="#5pbc">Geometries with a 5' barcode (-geom 5p-bc)</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc8">8</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_postgeom"></a><a class="intern" href="#postgeom">Further read processing</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">8.1.</div>
+<div class="toc_title toc_title2"><a name="toc_qqq"></a><a class="intern" href="#qqq">Quality</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">8.2.</div>
+<div class="toc_title toc_title2"><a name="toc_bbb"></a><a class="intern" href="#bbb">killer Bees</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">8.3.</div>
+<div class="toc_title toc_title2"><a name="toc_aaa"></a><a class="intern" href="#aaa">poly-A</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">8.4.</div>
+<div class="toc_title toc_title2"><a name="toc_nnn"></a><a class="intern" href="#nnn">N-masked bases</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">8.5.</div>
+<div class="toc_title toc_title2"><a name="toc_dust"></a><a class="intern" href="#dust">Low complexity sequence</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num2">8.6.</div>
+<div class="toc_title toc_title2"><a name="toc_length"></a><a class="intern" href="#length">Length-based filtering</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc9">9</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_recipe"></a><a class="intern" href="#recipe">Recipes</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc10">10</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_help"></a><a class="intern" href="#help">Reaper help</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc11">11</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_recordformat"></a><a class="intern" href="#recordformat">Input record specification</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc12">12</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_caveats"></a><a class="intern" href="#caveats">Caveats</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc13">13</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_at"></a><a class="intern" href="#at">Author/contact</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a name="toc14">14</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_notes"></a><a class="intern" href="#notes">Notes</a></div>
+</div>
+<div class="toc_leader">
+<div class="toc_num toc_num1"><a class="intern" href="#asd_body_end">End</a>.</div>
+<div class="toc_title toc_title1"><a name="toc_asd_body_end"></a><a class="intern" href="#asd_body_end">&nbsp;</a></div>
+</div>
+</div>
+</div>
+</div>
+<div id=asd_document_outer>
+<a name="asd_body_start"></a>
+<div id=asd_document>
+<div class="asd_date">May 11, 2018</div>
+<div class="asd_version">reaper-17-257
+</div>
+<div class="asd_title">Reaper</div>
+<div class="asd_subtitle">Demultiplexing, trimming and filtering sequencing data</div>
+
+<a name="syn"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#syn">Synopsis</a></div><div class="sec_num"><a class="intern" href="#toc1"><span class="sec_num">1</span></a></div></div>
+<p class="asd_par">
+Reaper is a program for demultiplexing, trimming and filtering short read sequencing data.
+It is intended to be suitable for dealing with a wide range of sequencing protocols,
+and will be updated to support new protocols where the current set of features does
+not suffice. It has the following features.
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">One read-at-time, written in C, file compression</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Small memory footprint (order of megabytes).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+1-4 million reads per minute (depending on read length, contamination check).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Twinned with <a class="local" href="tally.html">tally</a> for fast uniquifying of reads.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Can read and write gzip-compressed data.
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Read trimming</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+3' adapter removal.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Sliding window median quality based trimming (<a class="intern" href="#qqq"><tt>-qqq-check</tt></a>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Low complexity tail removal with DUST-type criterion
+(<a class="intern" href="#dust"><tt>-dust-suffix</tt> and <tt>-dust-suffix-late</tt></a>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Killer-B scrubbing (<a class="intern" href="#bbb"><tt>--bcq-early</tt> and <tt>--bcq-late</tt></a>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Cluster-N cleansing (<a class="intern" href="#nnn"><tt>-nnn-check</tt></a>).
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Each read is matched with the three prime adapter</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Smith-Waterman local alignment over full read and adapter.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Read/adapter match is user controlled (<tt>-3p-global</tt>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Handling of read-suffix adapter-prefix matching followed by read low complexity
+(<tt>-3p-prefix</tt> and <tt>-3p-head-to-tail</tt>).
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Flexible input and output</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+By default the input is assumed to be in <span class="smallcaps">FASTQ</span> format.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+A simple built-in parser allows a variety of input file formats (<tt>-record-format</tt> and <tt>-record-format</tt>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Reaper transparently reads input that was compressed by gzip.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Reaper writes gzip output by default and this can be overridden (<tt>--nozip</tt>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+A simple specification language allows flexible output file formats (<tt>-format-clean</tt> and <tt>-format-lint</tt>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Rich selection of output field for comprehensive inspection.
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Barcode filtering</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Output split into per-barcode clean files and annotated discard files.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Recognise different layouts of barcodes and sequence inserts (<tt>-geom</tt>).
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Mismatches can be controlled (<tt>-3p-barcode</tt>, <tt>-5p-barcode</tt>, <tt>-5p-sinsert</tt>).
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Quality checks</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Outputs per-barcode summary statistics for comprehensive QC plots.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Per-read characteristics available (e.g. alignment, trinucleotide score).
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Reads can be checked for ligation contamination</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Smith-Waterman local alignment.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Multiple checks for different oligos are possible.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+Generically supported as <i>match requirements</i> for <i>tabu</i> sequences (<tt>-mr-tabu</tt>).
+</div>
+</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Paired end data</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+It can work in conjuction with <a class="local" href="tally.html">tally</a> to process paired end files.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+This requires encoding the record offset in the output using the <tt>%J</tt> output syntax.
+</div>
+</div>
+</div>
+</div>
+
+<a name="gs"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#gs">Getting started</a></div><div class="sec_num"><a class="intern" href="#toc2"><span class="sec_num">2</span></a></div></div>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">Choose the appropriate geometry for your data: one of <tt>no-bc</tt> (<i>no&nbsp;barcode</i>),
+<tt>5p-bc</tt> (<i>5'&nbsp;barcode</i>) or <tt>3p-bc</tt> (<i>3'&nbsp;barcode</i>). This will be the argument
+to the <tt>-geom</tt> option.
+The input file, normally (but not necessarily) a <span class="smallcaps">FASTQ</span> file, is specified
+by giving its name as argument to the <tt>-i</tt> option.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+If your files are barcoded, find out what the barcodes are.</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+If possible, try to find out the 3' adapter sequence and
+the 5' adapter sequence that were used.
+The former will be stripped from the read if present.
+The latter, if specified, is treated as a <i>tabu</i> sequence.
+A read will be discarded if it is found to contain any tabu sequence.
+</p>
+<p class="asd_par">
+If you do not know the <i>3'&nbsp;adapter</i> it is possible to search for it in the
+input files with the program <a class="local" href="minion.html">minion</a>, that is shipped with reaper.
+For a <span class="smallcaps">FASTQ</span> file called <tt>input.fq.gz</tt> usage is as follows:
+</p>
+<div class="verbatim">minion search-adapter -i input.fq.gz</div>
+<p class="asd_car">
+By default <tt>minion</tt> will take the first 2 million reads. Use the
+<tt>-do</tt> option to change this.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+Create a metadata file describing
+barcodes and adapter sequences.
+The required columns in this file depend on the geometry, as described
+in <a class="intern" href="#gr">Read geometry</a>. A line must be present
+for each barcode. The <i>3'&nbsp;adapter</i> must be specified in the <tt>3p-ad</tt> column.
+If you do not know the adapter, supply either an empty field or a single hyphen.
+The <tt>tabu</tt> column is similarly required. Use either the <i>5'&nbsp;adapter</i> if known,
+or supply an empty field or a single hyphen.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+The metadata file must be tab-separated with all fields present
+as described in <a class="intern" href="#gr">Read geometry</a>, and each row must have the same number of fields.
+Neither missing fields nor spurious fields are allowed.
+If a field is allowed to be empty it can be achieved either by leaving the field
+empty, or by using a single hyphen. Below is a list of example metadata
+files, one for each geometry.
+Note that copying and pasting such an example will yield a file with spaces
+rather than tab characters, and this would need fixing.
+</p>
+<p class="asd_cpar"><span class="asd_cpar_caption"><i>5'&nbsp;barcode</i> example metadata file (geometry 5p-bc)</span></p>
+<div class="verbatim">barcode         3p-ad                           tabu                            5p-si
+ACTA            ATCTCGTATGCCGTCTTCTGCTTG        GTTCAGAGTTCTACAGTCCGACGATC      -
+ACAA            ATCTCGTATGCCGTCTTCTGCTTG        GTTCAGAGTTCTACAGTCCGACGATC      -
+CTAA            ATCTCGTATGCCGTCTTCTGCTTG        GTTCAGAGTTCTACAGTCCGACGATC      -</div>
+<p class="asd_car">
+In this example no sequence inserts were used, but
+the <tt>5p-si</tt> (5' sequence insert) column is required to be present. All its fields
+are empty, as indicated by the use of a single hyphen. It can be further be noted
+that the only variable column is that containing the barcodes, as is
+to be expected.
+</p>
+<p class="asd_cpar"><span class="asd_cpar_caption"><i>3'&nbsp;barcode</i> example metadata file (geometry 3p-bc)</span></p>
+<div class="verbatim">3p-si   3p-ad                           barcode tabu
+T       TCGTATGCCGTCTTCTGCTTGT          ACCT    GTTCAGAGTTCTACAGTCCGACGATC
+T       TCGTATGCCGTCTTCTGCTTGT          AGCA    GTTCAGAGTTCTACAGTCCGACGATC
+T       TCGTATGCCGTCTTCTGCTTGT          AGGT    GTTCAGAGTTCTACAGTCCGACGATC
+T       TCGTATGCCGTCTTCTGCTTGT          CAAG    GTTCAGAGTTCTACAGTCCGACGATC</div>
+<p class="asd_car">
+The column headers (and hence associated columns) do not need to be in a particular order.
+</p>
+<p class="asd_cpar"><span class="asd_cpar_caption"><i>no&nbsp;barcode</i> example metadata file (geometry no-bc)</span></p>
+<div class="verbatim">3p-ad                   tabu
+TCGTATGCCGTCTTCTGCTTGT  GTTCAGAGTTCTACAGTCCGACGATC</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+If the reads are barcoded, you will have created a metadata file.
+Suppose the geometry is <tt>5p-bc</tt>, the <span class="smallcaps">FASTQ</span> input is in a file called <tt>sample.fastq</tt> and
+the metadata file is called <tt>sample.txt</tt>.
+The basic reaper command line invocation then is:</p>
+<div class="verbatim">reaper -i sample.fastq -meta sample.txt -geom 5p-bc</div>
+<p class="asd_car">or</p>
+<div class="verbatim">reaper -i sample.fastq -meta sample.txt -geom 5p-bc</div>
+<p class="asd_car">
+Note that reaper places no requirements on file name suffixes, so
+both data file and metadata file may have arbitrary names.
+Additionally, the file containing the reads is allowed to be gzipped.</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+If the reads are not barcoded, it is possible to run reaper with
+or without a metadata file. The metadata file requires just
+the columns <tt>3p-ad</tt> and <tt>tabu</tt>. Again, unknown fields
+can be specified by leaving the field empty or specifying a
+single hyphen. The invocation is similar as before, with
+just the <tt>-geom</tt> option changed:
+</p>
+<div class="verbatim">reaper -i sample.fastq -meta sample.txt -geom no-bc</div>
+<p class="asd_car">
+In the absence of barcodes, it is possible to run reaper
+without a metadata file. In this case the options <tt>-3pa</tt>
+and <tt>-tabu</tt> are required. If the corresponding sequences
+are not known, specify an empty string again either as <tt>""</tt> or as
+a single hyphen.
+</p>
+<div class="verbatim">reaper -i sample.fastq -geom no-bc -3pa TCGTATGCCGTCTTCTGCTTGT -tabu GTTCAGAGTTCTACAGTCCGACGATC</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+By default output files are created that share the prefix <tt>out</tt>.
+Use the <tt>-basename</tt> option to change this prefix. The supplied prefix
+may contain a path (i.e. directory components), but the path <i>must</i>
+already exist as reaper will not create it.
+</p>
+</div>
+</div>
+
+<a name="gr"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#gr">Read geometry</a></div><div class="sec_num"><a class="intern" href="#toc3"><span class="sec_num">3</span></a></div></div>
+<p class="asd_par">
+Three <i>geometries</i> are supported. A geometry is a description of what a read
+looks like, i.e. the <i>read design</i>. The supported geometries are
+described in greater detail below.
+</p>
+<p class="asd_par">
+In the read
+representation below, a part enclosed in <tt>()</tt> indicates that the part <b>must</b>
+be present in the read, a part enclosed in <tt>[]</tt> is optional. A part enclosed
+in <tt>&lt;&gt;</tt> should <b>not</b> be present. This is unique to the <i>5'&nbsp;adapter</i> part of
+a read, as the sequencing primer anneals to the <i>5'&nbsp;adapter</i>, and hence the latter
+should not be seen in the raw read. Currently we have no means to strip
+a read of a such a match and proceed. The occurrence of this phenomenon and the
+quality of the remaining read should be quantified and any prospected gain
+evaluated before such a scheme is implemented.
+</p>
+<div class="verbatim">         |  &lt; - - - - - - - - - - - - Read geometry - - - - - - - - - - - - - -&gt;
+         |
+Geometry |  &lt;---------- 5p region ---------&gt;      Message  &lt;---- 3p region ----&gt;
+---------+----------------------------------------------------------------------
+ no-bc   |   &lt; 5p-ad &gt;                              M         [ 3p-ad ]
+ 3p-bc   |   &lt; 5p-ad &gt;                              M    ( 3p-si barcode 3p-ad )
+ 5p-bc   |   &lt; 5p-ad &gt; ( barcode ) [( 5p-si )]      M         [ 3p-ad ]</div>
+<p class="asd_car">
+The <i>5'&nbsp;sequence insert</i> is special. If such a sequence insert is present in the read design, (a.k.a.&nbsp;geometry),
+it should be present in all reads. For simplicity, the corresponding <tt>5p-si</tt> column
+is always required; if no sequence insert was used the fields in this column can be left empty.
+In the meta file, the following columns are <b>required</b> by each of the geometries,
+although some of them may be empty.
+</p>
+<div class="verbatim"> Geometry   tabu barcode 5p-si 3p-si 3p-ad
+---------|  ----+-------+-----+-----+-----+
+ no-bc   |    * |       |     |     |  *  |
+ 3p-bc   |    * |   *   |     |  *  |  *  |
+ 5p-bc   |    * |   *   |  *  |     |  *  |</div>
+<p class="asd_car">
+This data is used as follows, for each read.
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">The <tt>barcode</tt> column</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+If present, the meta file will normally have more than one data row,
+each row representing a different barcode, and the barcode column will
+normally be the only column that assumes different values.
+</p>
+<p class="asd_par">
+If absent, the meta file should have only a single data row.
+For the <i>3p-bc</i> geometry, reaper constructs the concatenation of the sequences
+in columns <tt>3p-si</tt>, <tt>barcode</tt>, and <tt>3p-ad</tt> (note: <tt>3p-si</tt> may be empty).
+It does this for all
+different barcodes, and each such concatenation is aligned to the read. The
+best match, if it passes the alignment requirements, determines the barcode
+bucket to which the read is allocated.
+</p>
+<p class="asd_par">
+For the <i>5p-bc</i> geometry, a matching barcode at the moment is required to be
+present at the beginning of the read.
+Mismatches may occur and the extent and types of allowable mismatches are
+under control of the user.
+Conceivably people might start to add random sequence inserts before their
+barcodes; this is not yet supported.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">The <tt>tabu</tt> column</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+For all geometries the <tt>tabu</tt> column is treated the same. It may be empty, or
+it may contain one stretch of sequence, or a list of comma-separated
+sequences. If a sequence is specified, it will be aligned to the read. If
+a match is found that exceeds the requirements as specified by the program option
+<tt>-mr-tabu</tt>, the read is discarded. There is currently no provision to simply remove the
+matching part. We currently suggest to supply the <i>5'&nbsp;adapter</i> sequence, if
+known, as a <i>tabu</i> sequence.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">The <tt>5p-si</tt> and <tt>3p-si</tt> columns</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+The <tt>3p-si</tt> column is only relevant for the <i>3p-bc</i> geometry. It is part
+of the concatenated sequence constructed and aligned as described above.
+</p>
+<p class="asd_par">
+For the <tt>5p-si</tt> column, if present, an alignment is attempted against the
+leading part of the read. This alignment should pass the <tt>-5p-sinsert</tt>
+alignment criteria in order for the read to pass.
+</p>
+</div>
+</div>
+
+<a name="alnbeh"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#alnbeh">Matching the read geometry</a></div><div class="sec_num"><a class="intern" href="#toc4"><span class="sec_num">4</span></a></div></div>
+<p class="asd_par">
+When aligning reads with bits of sequence (adapters, barcodes and inserts),
+reaper computes a full local alignment matrix for the two sequences,
+sometimes on a restricted part of one of the two sequences to be aligned.
+The alignment matrix is used in various ways.
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+For checking matches with the <i>3'&nbsp;adapter</i> and <i>tabu</i> contamination,
+the highest scoring local alignment is considered. Neither
+read nor sequence to be matched is restricted.
+</p>
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+Additionally, for the <i>3'&nbsp;adapter</i> matches at
+the end of the read and the start of the adapter are considered.
+</p>
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+For a <i>5'&nbsp;barcode</i> and for a <i>5' sequence insert</i> the aligment matrix is
+restricted to an initial part of the read. The length of this part is equal
+to the length of the sequence to match plus the maximal allowed edit
+distance.
+</p>
+</div>
+</div>
+<p class="asd_cpar"><span class="asd_cpar_caption">Alignment acceptance tests</span>
+A fundamental test used by Reaper is whether an alignment between
+two sequences is considered to be a true match. These criteria are to a very large
+extent under control of the user. The test is generically described as follows.
+Two sequences match if the highest scoring alignment satisfies:
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">The alignment stretches over at least L aligned bases.</p>
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">Along this stretch at most E edits (substitutions or gaps) are found.</p>
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign "
+style="right:-1em"><span class="itembullet">&bull;</span></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">Along this stretch at most G gaps are found.</p>
+</div>
+</div>
+<p class="asd_par">
+This is described in greater detail in the sections below.
+Importantly, if no gaps are allowed, the alignment algorithm will
+not generate alignments with gaps.
+</p>
+<p class="asd_cpar"><span class="asd_cpar_caption">Use only the start of the adapter</span>
+Three prime adapter contanimation almost always involves the leading part of the adapter,
+and using the full adapter sequence increases the chance of spurious matches.
+To this end, it is not advisable to use the full-length adapter.
+Reaper will by default only consider the <i>first eighteen</i> bases in the
+adapter. This number can be changed using the <tt>-restrict</tt>&nbsp;<tt>&lt;int&gt;</tt> option.
+</p>
+<p class="asd_cpar"><span class="asd_cpar_caption">Long reads</span>
+It is usually unnecessary to trim three prime adapters from long reads, as
+more often than not adapter contanimation will occur rarely in the raw read
+files. If adapter trimming is still desirable, there is a concern over
+false matches. With matching parameters of e.g. 14/2/0 (alignment over 14
+bases with two mismatches and no indels allowed) each 14-mer in the adapter
+can be matched by 91 different 14-mers, and for an 18-base adapter this
+leads to 455 matching 14-mers. Whilst this is a concern for both short
+reads and long reads, in long reads the scope for false positives is further
+amplified. In transcriptomics data this could lead to gaps in transcript
+assemblies.
+As a very simple unsophisticated measure reaper now offers the
+<tt>-guard</tt>&nbsp;<tt>&lt;int&gt;</tt> option. This will hide the first <tt>&lt;int&gt;</tt> read
+bases from the matching process. <i>This option is off by default.</i>
+</p>
+
+<a name="alnbeh2"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#alnbeh2">Alignment tests</a></div><div class="sec_num"><a class="intern" href="#toc5"><span class="sec_num">5</span></a></div></div>
+<p class="asd_par">
+An important part of reaper is the way in which a read/3p-adapter alignment is
+judged to resemble a true match. The complicating factor is that only a
+match to the initial part of the adapter may be present, possibly followed
+by poly-As or low complexity sequence where the sequencer ran out of sequence.
+The following reaper options control the matching behaviour:
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-restrict</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">This restricts the matching algorithm to only consider the first part
+of the adapter - the argument to this option is the number of bases considered.</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-3p-global</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+This option specifies stringency criteria for
+the best alignment found between the <i>3'&nbsp;adapter</i> and the read, anywhere.
+If the alignment passes the criteria (see below), the read is considered
+to have adapter sequence at that position.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-3p-prefix</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+This option specifies stringency criteria for an alignment
+that matches the start of the <i>3'&nbsp;adapter</i> with the end of the read. Additionally,
+the alignment may occur elsewhere in the read if followed by low complexity
+sequence. If the alignment passes the criteria (see below), the read is
+considered to have adapter sequence at that position.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-3p-head-to-tail</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+This option specifies the minimum length at which a perfect match
+at the end of the read to the beginning
+of the <i>3'&nbsp;adapter</i> should be stripped. Examples:
+</p>
+<div class="verbatim">   ACGTACGATGCTAGCTAGCTAGCTCGCGCTATCTTCTA
+   ACGTACGATGCTAGCTAGCTAGCTCGCGCTATCTTCT|
+   ACGTACGATGCTAGCTAGCTAGCTCGCGCTATCTTC||
+                                      |||
+                                      CTAGTCGTAC</div>
+<p class="asd_car">
+Such a match is removed if it is present and has length at least <i>k</i>
+(the argument to this option). If <i>k</i> is zero no such match is
+attempted and this is the default setting. For data heavily
+contaminated with <i>3'&nbsp;adapter</i> sequence it can be worthwhile to always strip a
+perfect match (for example using <tt>-3p-head-to-tail</tt>&nbsp;<tt>1</tt>), or otherwise
+the last bases of cleaned reads will be severely biased towards the bases at
+the start of the adapter sequence. For such data this effect is worse than
+the effect of false positive matching, that is, those instances where a
+head-to-tail match exists and is stripped, and where the matching part is in
+fact properly part of the biological sequence fragment.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-3p-barcode</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+This specifies stringency criteria (see below) for the barcode section of the best
+alignment between the read and the concatenation <tt>3p-si+barcode+3p-ad</tt> in
+the geometry <i>3p-bc</i>.
+All barcodes are tried and the best scoring barcode
+is accepted. This is different from the <i>5'&nbsp;barcode</i> case described below.
+The barcode is currently hardcoded to start either at the first or second
+base of the adapter.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-5p-barcode</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">
+This specifies stringency criteria (see below) for the alignment
+between a <i>5'&nbsp;barcode</i> and the read.
+All barcodes are tried and the read is accepted only if a single barcode
+passes these criteria.
+</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">-5p-sinsert</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">This specifies stringency criteria for a match
+between the read and a sequence insert that should be present at the
+beginning of the read (after stripping of the <i>5'&nbsp;barcode</i> if present).
+</p>
+</div>
+</div>
+
+<a name="alnreq"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#alnreq">Alignment test specification</a></div><div class="sec_num"><a class="intern" href="#toc6"><span class="sec_num">6</span></a></div></div>
+<p class="asd_par">
+The following options all take a similar form of argument. Where an <tt>X</tt>
+is written below, reaper ignores the corresponding parameter due to the
+availability of a canonical value (e.g. <i>length of barcode</i>). It should
+ordinarily not be necessary to specify the <i>offset</i> parameter (below
+given as <b><tt>o</tt></b>).
+</p>
+<div style="
+margin-top:1em;
+margin-bottom:1em;
+margin-left:2em;
+">
+<div class=" itemize " style="margin-top:0em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_cascade"><div class=" item_leftalign nowrap "
+style=""><tt>-3p-global</tt> <b><tt>l/e/g/o</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_leftalign nowrap "
+style=""><tt>-3p-prefix</tt> <b><tt>l/e/g/o</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">The default value for <b><tt>o</tt></b> is <tt>2</tt>.</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_leftalign nowrap "
+style=""><tt>-3p-barcode</tt> <b><tt>X/e/g</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_leftalign nowrap "
+style=""><tt>-5p-barcode</tt> <b><tt>X/e/g/b</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">The first (<b><tt>l</tt></b>) position is ignored, and the fourth (<b><tt>b</tt></b>)
+position is interpreted as a bit field (see below).</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_leftalign nowrap "
+style=""><tt>-5p-sinsert</tt> <b><tt>X/e/g/o</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<p class="asd_car">The default value for <b><tt>o</tt></b> is <tt>10</tt>.</p>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_leftalign nowrap "
+style=""><tt>-mr-tabu</tt> <b><tt>l/e/g/o</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+</div>
+</div>
+</div>
+<p class="asd_car">
+The argument to each
+is of the form <b><tt>l/e/g/o</tt></b> (example: <tt>14/2/0/0</tt>), as
+explained below. Generally speaking, the first, second, third and fourth positions respectively
+denote parameters related to <i>length</i>, <i>edit distance</i>, <i>gap size</i>, and <i>offset</i>.
+Exceptions exist, such as the fourth position in the <tt>-5p-barcode</tt> argument.
+</p>
+<p class="asd_par">
+It is possible to leave out any trailing part, so <b><tt>l/e</tt></b>
+or <tt>12/2</tt> is a valid form as well.
+The meaning of the separate parts are as follows. The context is that of
+the best local alignment found for a read and an adapter sequence, to decide
+whether that alignment represents a true match.
+It is judged to represent a true match if the alignment has a subpart
+satisfying the following criteria.
+</p>
+<div class=" itemize " style="margin-top:1em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign nowrap "
+style="right:-1em">&nbsp;<b><tt>l</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+The subpart stretches over at least <b><tt>l</tt></b> bases.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign nowrap "
+style="right:-1em">&nbsp;<b><tt>e</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+There are no more than <b><tt>e</tt></b> edits in the subpart.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign nowrap "
+style="right:-1em">&nbsp;<b><tt>g</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+The total gap length in the subpart does not exceed <b><tt>g</tt></b>.
+</div>
+<div style="position:relative; margin-top:0em"><div class=" item_compact"><div class=" item_rightalign nowrap "
+style="right:-1em">&nbsp;<b><tt>o</tt></b></div></div></div>
+<div class=" item_text " style="margin-left:2em">
+The match occurs within an offset of <b><tt>o</tt></b> bases.
+The exact meaning depends on the part being matched (see below).
+A zero value implies on offset requirement at all.
+</div>
+</div>
+<p class="asd_par">
+The fourth <b><tt>b</tt></b> field in the <tt>-5p-barcode</tt> option is a bit field. Bit <tt>1</tt> implies
+that a <i>zip alignment</i> is attempted first between barcode and read. A zip alignment
+is one where only mismatches are allowed and the beginning
+of the barcode is aligned precisely to the beginning of the read.
+This can be useful for short barcodes,
+where matching barcodes at an offset in the read may too easily lead to false matches.
+Bit <tt>2</tt> implies that an alignment is attempted where the latter is allowed.
+In this case the number of offset positions are counted as edits
+and contribute towards the total number of edits (that will be compared with the
+<b><tt>e</tt></b> part).
+It is possible to combine the two approaches.
+By default the fourth field is set to <tt>2</tt>. For short barcodes it can be advisable
+to set it either to <tt>1</tt> or <tt>3</tt>.
+</p>
+<p class="asd_par">
+For adapter matching and tabu matching the offset position, if utilised, indicates how far from the start
+of the adapter the match is allowed to occur.
+</p>
+<p class="asd_par">
+For <tt>-5p-sinsert</tt> the offset position indicates how far into the read the sequence
+insert is allowed to extend <i>beyond the length of the sequence insert itself</i>.
+For very short inserts it is useful to set this to zero or a very small value.
+</p>
+
+<a name="geom"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#geom">Geometry-dependent read processing</a></div><div class="sec_num"><a class="intern" href="#toc7"><span class="sec_num">7</span></a></div></div>
+<p class="asd_par">The way reads are processed is dependent on the presence or absence
+of barcodes and the geometry (i.e. lay-out) of the read.
+</p>
+
+<a name="nobc"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#nobc">Geometries without barcode (-geom no-bc)</a></div><div class="sec_num"><a class="intern" href="#toc7"><span class="sec_num">7.1</span></a></div></div>
+<p class="asd_par">
+For geometry <i>no-bc</i>, matching is attempted with up to three different
+types of oligo fragments, all of which can be optional.
+</p>
+<p class="asd_par">
+If specified in the <i>5p-sinsert</i> column or with the <tt>-5psi</tt> option,
+a match is attempted between this sequence insert and the start of the read.
+If no such match is found, the read is by default discarded.
+If the <tt>keep-all</tt> option is specified however such reads are
+truncated to be empty and kept as clean reads.
+</p>
+<p class="asd_par">
+Subsequently, if specified in the <i>3p-ad</i> column or with the <tt>-3pa</tt> option,
+a match is attempted with that adapter and the read.
+Matching is attempted in a cascading fashion, as described above
+under </p>
+<div style="
+margin-top:1em;
+margin-bottom:1em;
+margin-left:2em;
+">
+<tt>-3p-global</tt><br>
+<tt>-3p-prefix</tt><br> <tt>-3p-head-to-tail</tt><br>
+</div>
+<p class="asd_car"> If a match
+is present, it is removed. Naturally, a match is not required. Further
+trimming is attempted as described in section&nbsp;<a class="intern" href="#postgeom">Further read processing</a>. After
+this, if the read passes the length cutoff (by default no such cutoff is
+enforced), then the read is checked for contamination by <i>tabu</i>
+sequences, if any.
+</p>
+<p class="asd_par">
+With the <tt>no-bc</tt> geometry reaper can be used either with or without a metadata
+file. If no metadata file is used the option <tt>-3pa</tt> is required. This option
+specifies the <i>3'&nbsp;adapter</i>. It is still possible to turn off <i>3'&nbsp;adapter</i> matching by
+passing either the empty string or a single hyphen as argument to <tt>-3pa</tt>.
+</p>
+<p class="asd_par">
+Reaper processing in the <tt>no-bc</tt> geometry can be fully controlled without a
+metadata file by using the options <tt>-3pa</tt>, <tt>-tabu</tt> and <tt>-5psi</tt>.
+</p>
+
+<a name="3pbc"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#3pbc">Geometries with a 3' barcode (-geom 3p-bc)</a></div><div class="sec_num"><a class="intern" href="#toc7"><span class="sec_num">7.2</span></a></div></div>
+<p class="asd_par">
+For geometry <i>3p-bc</i>, a match is attempted with the concatenation <tt>3p-si+barcode+3p-ad</tt>,
+as described above under
+</p>
+<div style="
+margin-top:1em;
+margin-bottom:1em;
+margin-left:2em;
+">
+<tt>-3p-global</tt><br>
+<tt>-3p-prefix</tt><br>
+<tt>-3p-barcode</tt>
+</div>
+<p class="asd_car">
+A match is required for the read to pass, so that it can be allocated to a
+barcode bucket. For all barcodes, the full concatenation is aligned
+and checked against the criteria
+specified by <tt>-3p-global</tt> and <tt>-3p-prefix</tt>, in that order.
+One of these two checks should succeed for a concatenation to be considered further.
+Additionally, the barcode section of
+the concatenated oligonucleotide is separately required to pass
+the criteria specified by <tt>-3p-barcode</tt>.
+</p>
+<p class="asd_par">
+It should be noted that it is possible for multiple barcodes to pass the procedure
+just described, especially if barcodes are short.
+The reason is that read errors are increasingly likely towards the end of a read
+and may occur in the barcode section.
+The match criteria thus have to allow for a positive edit distance.
+Hence, alignment scores are tracked
+and the concatenation (and associated barcode) with the best score is chosen.
+The case where two or more barcodes are tied is considered a <i>conflict</i>,
+and none is chosen.
+</p>
+<p class="asd_par">
+Barcode resolution is followed by further attempted trimming as described
+in&nbsp;<a class="intern" href="#postgeom">Further read processing</a>.
+After this, if the read passes the length cutoff (by default
+no such cutoff is enforced), then <i>tabu</i> sequences are checked, if any.
+</p>
+
+<a name="5pbc"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#5pbc">Geometries with a 5' barcode (-geom 5p-bc)</a></div><div class="sec_num"><a class="intern" href="#toc7"><span class="sec_num">7.3</span></a></div></div>
+<p class="asd_par">
+For geometry <i>5p-bc</i> a barcode must be found at the beginning of the read.
+All barcodes are aligned and checked using the criteria specified by
+the <tt>-5p-barcode</tt> option.
+Subsequently, a match with the <i>5'&nbsp;sequence insert</i> is required if such an insert
+is specified in the <tt>5p-si</tt> column of the metadata file. This match
+can be controlled using the option&nbsp;<tt>5p-sinsert</tt>.
+Subsequently, matching of the <i>3'&nbsp;adapter</i> is attempted as described above under
+</p>
+<div style="
+margin-top:1em;
+margin-bottom:1em;
+margin-left:2em;
+">
+<tt>-3p-global</tt><br>
+<tt>-3p-prefix</tt><br>
+<tt>-3p-head-to-tail</tt>
+</div>
+<p class="asd_car">
+and this is combined with further read trimming as described in&nbsp;<a class="intern" href="#postgeom">Further read processing</a>.
+</p>
+
+<a name="postgeom"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#postgeom">Further read processing</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8</span></a></div></div>
+<p class="asd_par">
+Before and after the check for adapter presence, a number of other criteria are tested,
+refered to as <i>trimming tests</i> further below.
+These test may establish that trimming is necessary independent of whether an
+adapter match is present or not. They are described below, and include
+checks for low base call quality, occurrence of (too many) <tt>N</tt>-masked bases,
+and low-complexity sequence.
+Each test that is employed can potentially necessitate the removal of a
+suffix of certain length. If at least one of these tests succeeds, the
+longest such suffix will be removed.
+</p>
+
+<a name="qqq"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#qqq">Quality</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8.1</span></a></div></div>
+<p class="asd_par">
+Low quality sequence can be detected using the median quality value in a
+sliding window. The quality-based trimming test is defined by the first
+base where this median value drops below a specified threshold. This test
+is applied to the full read, bar an initial (adjustable) offset that is
+skipped. The cutoff value and window length are specified using
+<tt>-qqq-check</tt>&nbsp;<tt>&lt;cut-off&gt;/&lt;length&gt;</tt>. By default the trim cutoff is at the
+start of the window. Optionally an offset into the window can be specified
+using <tt>-qqq-check</tt>&nbsp;<tt>&lt;cut-off&gt;/&lt;length&gt;/&lt;offset&gt;</tt>. It is possible (and the
+default approach) to omit an initial part of the read from inspection by
+using <tt>-qqq-check &lt;cut&gt;/&lt;length&gt;/&lt;offset&gt;/&lt;prefix-size&gt;</tt>. This is useful
+for sequencers that require calibration during the first few sequencing
+cycles. The default value for <tt>&lt;prefix-size&gt;</tt> is 10.
+</p>
+<p class="asd_par">
+For <tt>-qqq-check</tt> the cutoff relates to <i>the raw <span class="smallcaps">ascii</span> values
+found in the file</i> and expressly <i>not</i> to the transformed P-values
+they represent.</p>
+
+<a name="bbb"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#bbb">killer Bees</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8.2</span></a></div></div>
+<p class="asd_par"><tt>B</tt> is a special Illumina quality score indicating the base at that position
+should not be trusted. Runs of <i>trailing</i> <tt>B</tt>s can be detected
+by specifying either <tt>--bcq-early</tt> or <tt>--bcq-late</tt>. With
+the former option the trimming is applied to the full read (before the adapter is matched), and
+consequently can lead to stripping of bases that could aid in adapter
+recognition. With the latter option the trimming test is applied after
+adapter matching and handled simultaneously with the other trimming tests.
+</p>
+
+<a name="aaa"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#aaa">poly-A</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8.3</span></a></div></div>
+<p class="asd_par">
+Trailing <tt>A</tt>s can be detected using <tt>-polya</tt>&nbsp;<tt>&lt;count&gt;</tt>. This test
+only succeeds if the poly-A sequence has length at least <tt>&lt;count&gt;</tt>.
+It is applied to the full read, before the adapter is matched.
+It is worthwhile to be aware of the more powerful <tt>-dust-suffix</tt> and <tt>-dust-suffix-late</tt> options.
+These will also remove poly-A stretches interspersed with other bases, and
+it is possible to make these options exclusively sensitive to A-rich sequences
+by using for example <tt>-dust-suffix</tt>&nbsp;<tt>20/A</tt> and <tt>-dust-suffix-late</tt>&nbsp;<tt>20/A</tt>.
+At the recommended default DUST cutoff 20 the smallest poly-A stretch
+recognised by these options is of length 6. Hence, depending on the data, the <tt>-polya</tt>
+option may still be of use.
+</p>
+
+<a name="nnn"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#nnn">N-masked bases</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8.4</span></a></div></div>
+<p class="asd_par">
+Bases may not be called and show up as <tt>N</tt> in the read. This
+trimming test uses a sliding window to identify whether a read suffix should be removed.
+Use <tt>-nnn-check &lt;count&gt;/&lt;length&gt;</tt> to test for the presence
+of a window of size <tt>&lt;length&gt;</tt> in which
+at least <tt>&lt;count&gt;</tt> <tt>N</tt>s occur. The suffix starting at the first
+such window is the result of this test.
+</p>
+
+<a name="dust"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#dust">Low complexity sequence</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8.5</span></a></div></div>
+<p class="asd_par">
+Reaper has two mechanisms to deal with low complexity sequence.
+The two use very similar principles, as explained below.
+</p>
+<p class="asd_par">
+The first approach that can be taken is to test for low complexity
+sequence at the end of a read, before adapter sequence is removed.
+This is done by computing the same criterion as used by DUST. The read
+suffix with highest DUST score is considered. The trimming test succeeds and
+this suffix is used if the score exceeds or is equal to the threshold
+specified as <tt>-dust-suffix</tt>&nbsp;<tt>&lt;threshold&gt;</tt>.
+</p>
+<p class="asd_par">
+A variant of this, still part of the first mechanism, is to apply
+this test <i>after</i> initial trimming by other means, such
+as trimming by adapter, quality, or occurrence of N-masked bases.
+Sequencing protocols now exist that require this. In some protocols it
+is possible that a <i>3'&nbsp;adapter</i> is still preceded by low complexity sequence, and
+in that case the detection test that starts at the end of the read can not
+extend beyond the adapter.
+An adapter-aware test can be specified independently with
+<tt>-dust-suffix-late</tt>&nbsp;<tt>&lt;threshold&gt;</tt> and works identically to
+<tt>-dust-suffix</tt>. It is possible and can be useful to use both
+options simultaneously, and a good value to use is the default DUST
+threshold&nbsp;<tt>20</tt>.
+</p>
+<p class="asd_par">
+For both these options, <tt>-dust-suffix</tt> and <tt>-dust-suffix-late</tt>,
+it is possible to restrict them to specific types of low-complexity
+sequence, namely those dominated by a single base. Examples are poly-A
+stretches interspersed with other bases or poly-T stretches interspersed
+with other bases. To exclude <i>only</i> such stretches use
+<tt>-dust-suffix</tt>&nbsp;<tt>20/A</tt> to exlude poly-A dominated sequence
+or <tt>-dust-suffix</tt>&nbsp;<tt>20/AT</tt> to exclude sequence that is either poly-A
+dominated or poly-T dominated. Other combinations of bases are allowed.
+A sequence is recognised as a poly-base low complexity sequence if
+it satisfies the DUST criterion and at least half of the bases are
+the same nucleotide and that nucleotide has been specified.
+If no bases are specified, no such demand is made.
+</p>
+<p class="asd_par">
+The second mechanism removes the final <i>cleaned</i> read if it does not
+satisify the threshold specified by <tt>-tri</tt>&nbsp;<tt>&lt;threshold&gt;</tt>. It is an
+accident of history that this criterion is a scaled version of the DUST
+criterion, applied to the full length of the clean read. It was
+<a target="_parent" class="extern" href="https://stat.ethz.ch/pipermail/bioc-sig-sequencing/2009-February/000170.html">proposed
+by Hervé Pagès</a>, and a given DUST threshold (used by <tt>-dust-suffix</tt> and
+<tt>-dust-suffix-late</tt>) must be multiplied by two to obtain the
+corresponding <tt>-tri</tt> threshold. A reasonable threshold to choose for
+this option, if used, is thus <tt>-tri</tt>&nbsp;<tt>40</tt>, corresponding with the default
+DUST threshold of&nbsp;<tt>20</tt>.
+</p>
+<p class="asd_par">
+It can be useful to refrain from tri-nucleotide filtering so
+that quality control plots give a comprehensive view.
+It is possible to output the trinucleotide score alongside the read with reaper (using
+the formatting directive <tt>%T</tt>) and filter at a later stage.
+</p>
+
+<a name="length"></a><div class="sec_leader sec_lev2"><div class="sec_title"><a class="intern" href="#length">Length-based filtering</a></div><div class="sec_num"><a class="intern" href="#toc8"><span class="sec_num">8.6</span></a></div></div>
+<p class="asd_par">
+After adapter matching and trimming the length of a read may be short.
+With <tt>-clean-length</tt>&nbsp;<tt>&lt;length&gt;</tt> any read shorter than <tt>&lt;length&gt;</tt> will
+be discarded.
+</p>
+<p class="asd_par">
+Again, it can be useful to refrain from length-filtering so that quality
+control plots give a comprehensive view. Empty cleaned reads generally
+correspond to adapter polymers, and a peak at this length
+could correlate with size selection or ligation issues.
+</p>
+
+<a name="recipe"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#recipe">Recipes</a></div><div class="sec_num"><a class="intern" href="#toc9"><span class="sec_num">9</span></a></div></div>
+<p class="asd_par">The examples below assume a directory called <tt>out</tt> exists.</p>
+<div class=" itemize recipe" style="margin-top:2em; margin-left:0em; font-size:100%">
+<div style="position:relative; margin-top:0em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Baseline reaper invocation, <i>5'&nbsp;barcode</i>.</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class="verbatim">reaper -geom 5p-bc -meta ex5pbc.meta -i ex5pbc.fastq.gz -basename out/ex5pbc</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Baseline reaper invocation, <i>3'&nbsp;barcode</i>.</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class="verbatim">reaper -geom 3p-bc -meta ex3pbc.meta -i ex3pbc.fastq.gz -basename out/ex3pbc</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Baseline reaper invocation, no barcode, using metadata file.</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class="verbatim">reaper -geom no-bc -meta exnobc.meta -i exnobc.fastq.gz -basename out/nobcx3</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Baseline reaper invocation, no barcode.</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class="verbatim">reaper -geom no-bc -i exnobc.fastq.gz -basename out/exnobc -3pa TCGTATGCCGTCTTCTGCTTGT -tabu GTTCAGAGTTCTACAGTCCGACGATC</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Remove any read containing one or more Ns, do not produce QC files.</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class="verbatim">reaper -geom no-bc -i ex.fastq.gz --noqc --full-length -basename out/ex -nnn-check 1/1 -3pa ""</div>
+</div>
+<div style="position:relative; margin-top:1em"><div class=" item_cascade"><div class=" item_rightalign nowrap "
+style="right:-1em">Reaper help &mdash; see also the following section.</div></div></div>
+<div class=" item_text " style="margin-left:2em">
+<div class="verbatim">reaper -h</div>
+</div>
+</div>
+
+<a name="help"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#help">Reaper help</a></div><div class="sec_num"><a class="intern" href="#toc10"><span class="sec_num">10</span></a></div></div>
+<p class="asd_par">Below is the reaper version for this document and the corresponding help output, resulting from
+<tt>reaper --version</tt> and <tt>reaper&nbsp;-h</tt> respectively.</p>
+<div class="verbatim">Reaper version: reaper-17-257
+
+Required options
+-geom &lt;mode&gt;   mode in {no-bc, 3p-bc, 5p-bc}
+-meta &lt;fname&gt;  file with geometry-dependent format. Required columns:
+   Geometry    Columns:
+      no-bc          3p-ad     -       -      -    tabu
+      3p-bc          3p-ad  barcode  3p-si    -    tabu
+      5p-bc          3p-ad  barcode    -    5p-si  tabu
+bc=barcode, ad=adaptor, si=sequence insert
+Columns 3p-si, 5p-si, 3p-ad and tabu may all be empty
+Alternatively, to express absence, a single hyphen may be used
+
+Important options
+-i &lt;fname&gt;        input stream (gzipped file allowed) (default STDIN)
+-clean-length &lt;int&gt; minimum allowed clean length (default 0)
+-guard &lt;int&gt;      protect first &lt;int&gt; bases in read from adapter and tabu matching
+-restrict &lt;int&gt;   only use the first &lt;int&gt; bases of adapter or tabu sequence (default 18)
+                  This is to avoid false positive matches
+-tri &lt;threshold&gt;  filter out reads with tri-nt score &gt; threshold
+                  a reasonable &lt;threshold&gt; is 35
+-qqq-check  &lt;val&gt;/&lt;winlen&gt;  cut sequence when median quality drops below &lt;val&gt;
+-qqq-check  &lt;val&gt;/&lt;winlen&gt;/&lt;winofs&gt; as above, cut at &lt;winofs&gt; (default 0)
+-qqq-check  &lt;val&gt;/&lt;winlen&gt;/&lt;winofs&gt;/&lt;readofs&gt; as above, start at &lt;readofs&gt;
+-dust-suffix &lt;threshold&gt; dust theshold for read suffix (default 0, suggested 20)
+-nnn-check &lt;count&gt;/&lt;outof&gt; (default 0/0)
+      disregard read onwards from seeing &lt;count&gt; N's in &lt;outof&gt; bases
+
+Alignment options
+Options to specify when part of an alignment triggers a match:
+-3p-global  l/e[/g[/o]]  (default 14/2/1/0)
+-3p-prefix  l/e[/g[/o]]  (default 8/2/0/2)
+-3p-barcode l/e[/g[/o]]  (default 0/6/1/0)
+-5p-barcode l/e[/g[/o]]  (default 0/0/0/2)
+-5p-sinsert l/e[/g[/o]]  (default 0/2/1/10)
+-mr-tabu    l/e[/g[/o]]  (default 16/2/1/0)
+-3p-head-to-tail l minimal trailing perfect match length (default 0)
+   syntax used in the above:
+      l  &lt;int&gt; minimum length required to count sub-alignment as match
+      e  &lt;int&gt; maximum allowed edit distance
+      g  &lt;int&gt; [optional, not active when set to 0] maximum allowed number of gaps
+      o  &lt;int&gt; [optional, not active when set to 0] offset:
+            o= 5  requires alignment to start in the first five bases of adaptor
+            o=-5  requires alignment to end in the last five bases of adaptor
+-swp M/S/G match/substitution/gap gain/cost/cost (default 4/1/3)
+
+Input/output options
+--fasta-in      read FASTA input
+-record-format &lt;format string&gt; (record description, default @%I%A%n%R%n+%#%Q%n)
+   [ -record-format syntax is output when supplying --record-format ]
+-record-format2 &lt;format string&gt; (simple line formats, one field per line):
+      R  read
+      I  read identifier
+      Q  quality scores
+      D  discard field
+
+-basename &lt;pfx&gt;   pfx.lint.gz, pfx.clean.gz pfx.report etc will be constructed
+-format-clean &lt;format string&gt; (output for clean reads)
+-format-lint &lt;format string&gt; (output for filtered reads)
+   -format-clean/lint specification syntax:
+      %R  read
+      %C  clean read
+      %Z  clean read padded with Ns if necessary
+      %V  reverse complement of clean read
+      %I  read identifier
+      %Q  clean or input read quality (for clean / lint file respectively)
+      %X  read count (only applicable if -record-format is used)
+      %Y  input read quality
+      %q&lt;c&gt;  clean input read quality padded with character &lt;c&gt;
+      %A  annotation field
+      %L  clean read length
+      %M  message describing cause for filtering (lint file)
+      %T  trinucleotide complexity score (clean/lint file)
+      %U  dUst sUffix complexity information
+      %3  best read/3p-adaptor alignment
+      %=  alignment characteristics
+            mt=matchtype
+            sc=suffix-complexity
+            ht=head-tail-match
+            nn=N-match-offset
+            bb=B-match-offset
+            aa=Polya-offset
+            qq=Quality-trim-offset
+      %n  newline
+      %J  record offset, unique for each read. Use to match paired-end reads
+      %f  fastq line number based on standard fastq format
+      %t  tab
+      %%  percent sign
+   Anything else is copied verbatim
+-debug [acl]+     a=alignments c=clean l=lint
+-sample c/l       if debug, sample every c/l clean/lint read
+--nozip           do not output gzipped files
+--noqc            do not output quality report files
+
+Miscellaneous options
+--bcq-early       perform early 'B' quality filtering (when reading sequences)
+--bcq-late        perform late 'B' quality filtering (before outputting sequences)
+--full-length     only allow reads not shortened in any filter step
+--keep-all        delete rather than discard reads (e.g. tabu match, missing 5p-sinsert)
+-trim-length &lt;int&gt;     cut reads back to length &lt;int&gt;
+-polya &lt;int&gt;      remove trailing A's if length exceeds &lt;int&gt;
+-sc-max &lt;f&gt;       threshold for complexity of suffix following prefix match (default 0.25)
+
+Options for use when running reaper with -geom no-bc
+-3pa &lt;three prime adaptor&gt;
+-5psi &lt;five prime sequence insert&gt;
+-tabu &lt;tabu sequence&gt;</div>
+
+<a name="recordformat"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#recordformat">Input record specification</a></div><div class="sec_num"><a class="intern" href="#toc11"><span class="sec_num">11</span></a></div></div>
+<p class="asd_par">
+By default reaper expects <span class="smallcaps">FASTQ</span> input and writes <span class="smallcaps">FASTQ</span> output. A few options
+exist providing other formats. Additionally it is possible to specify custom
+input and output format using two simple format specification syntaxes.
+</p>
+<p class="asd_par">
+<span class="smallcaps">FASTA</span> input and output are specified using <tt>--fasta-in</tt> and <tt>--fasta-out</tt>.
+A slightly extended <span class="smallcaps">FASTQ</span> format is specified with <tt>--fastqx-out</tt>. In this
+format the identifier line is extended with a <tt>recno=&lt;NUM&gt;</tt> field, where
+<tt>&lt;num&gt;</tt> indicates the record offset in the input file.
+Such a field is necessary for example to re-pair paired-end data after processing
+with reaper; <a class="local" href="tally.html">tally</a> reads this format when equipped
+with the <tt>--fastqx-in</tt> option.
+</p>
+<p class="asd_par">
+The output format specification syntax is specified in the previous section,
+as part of the reaper help output under <tt>-format-clean/lint specification syntax</tt>.
+<a name="record-format">The input format specification language</a> is given below. It can be accessed on
+the command line by issuing <tt>reaper --record-format</tt>.
+</p>
+<div class="verbatim">-record-format &lt;format string&gt; (extended record description syntax)
+     %R  expect read (longest sequence found over [a-zA-Z]*) - empty read allowed
+     %I  expect identifier (longest sequence of non-blank)
+     %A  expect overflow annotation field (initial blanks skipped, rest of line)
+     %a  use previous %F or %G or %H field as annotation
+     %B  expect annotation field (longest sequence of non-blank)
+     %Q  expect quality (longest sequence of non-blank)
+     %X  expect count (a nonnegative integer number)
+     %F  expect and discard field (longest sequence of non-tab)
+     %G  expect and discard field (longest sequence of non-blank)
+     %Hx (x is a placeholder) expect and discard up to x
+     %#  discard everything until end of line
+     %b  expect run of blanks (space or tab)
+     %n  expect end of line match
+     %.  expect and discard any character
+     %s  expect a space
+     %t  expect a tab
+     %%  expect a percent sign
+Anything else requires a literal match, see the FASTA example just below
+The string '&gt;%I%#%R%n' will parse FASTA-ish input (but use --fasta-in instead)
+The string '%F%t%R%#' retrieves the second field from each line</div>
+
+<a name="caveats"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#caveats">Caveats</a></div><div class="sec_num"><a class="intern" href="#toc12"><span class="sec_num">12</span></a></div></div>
+<p class="asd_par">
+Do not use <tt>-basename</tt>&nbsp;<tt>foo/bar/</tt> -- then files such as foo/bar/.clean.gz
+will be created (and not be visible with default ls).
+</p>
+
+<a name="at"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#at">Author/contact</a></div><div class="sec_num"><a class="intern" href="#toc13"><span class="sec_num">13</span></a></div></div>
+<p class="asd_par">
+Reaper was written by Stijn van Dongen and benefited greatly from
+suggestions by Cei Abreu-Goodger, Anton Enright, Mat Davis, Sergei Manakhov,
+Harpreet Saini, Nenad Bartonicek and Leonor Quintais.
+For questions and feedback send e-mail
+to&nbsp;&nbsp;<tt>kraken&nbsp;&#x0040;&nbsp;ebi&nbsp;&#x002E;&nbsp;ac&nbsp;&#x002E;&nbsp;uk</tt>.
+</p>
+
+<a name="notes"></a><div class="sec_leader sec_lev1"><div class="sec_title"><a class="intern" href="#notes">Notes</a></div><div class="sec_num"><a class="intern" href="#toc14"><span class="sec_num">14</span></a></div></div>
+<p class="asd_par">
+This page was generated from Aephea macros, <a class="extern" target="_parent" href="http://micans.org/aephea">http://micans.org/aephea</a>.
+</p>
+<a name="asd_body_end"></a>
+</div>
+</div>
+</body>
+</html>

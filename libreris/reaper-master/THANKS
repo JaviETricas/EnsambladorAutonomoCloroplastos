@@ -1,0 +1,9 @@
+
+Anton Enright and Mat Davis extensively and patiently tested reaper and tally,
+provided feedback.  Nenad Bartonicek, Harpreet Saini, Leonor Quintais and
+Sergei Manakov also tested and provided feedback.
+
+Several aspects of reaper's processing strategy, such as recognizing adapter
+prefix matches in reads followed by low complexity sequence, were inspired by
+Cei Abreu-Goodger's read processing scripts.
+

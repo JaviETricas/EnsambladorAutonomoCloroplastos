@@ -1,0 +1,126 @@
+
+
+15-065
+
+   *  Added -guard <int> option (default not set). This hides
+      the first <int> bases of the read from any matching process.
+      This is intended for longer reads; with matching parameters
+      of e.g. 14/2/0 each 14-mer in the adapter can be matched
+      by 91 different 14-mers, and for an 18-base adapter this
+      leads to 455 matching 14-mers.
+
+      This is intended to protect against the possibility that
+      sequences of interest may have such a matching k-mer.
+      If they do, that k-mer will always be removed from the
+      read, necessarily leading to gaps in any subsequent assembly.
+      With the -guard option these k-mers will not be removed
+      in all reads where they occur in the first <int> bases.
+
+   *  Added -restrict <int> option. This instructs reaper
+      to only consider at most the <int> initial bases in both
+      the 3' adapter and the tabu sequence, if specified.
+      By default this parameter is set to 18. The intent
+      is to prevent spurious matches - where adapter contamination
+      is present, it involves almost invariably the first bases
+      of the adapter.
+
+   *  Fixed small accounting bug that could manifest itself
+      when --bcq-early is used.
+
+13-274
+13-231
+
+   --stream-clean (new option)
+      This causes the clean output to be written to STDOUT and can be used to
+      chain multiple reaper invocations consecutively.
+      Make sure to use different -basename <prefix> arguments for
+      each instance.
+
+   %V (new format directive)
+      This specifies the reverse complement of the clean read.
+
+   *  Reads are truncated to fit alignment matrix. Earlier versions
+      ignored these reads.
+
+   *  Reaper was dos-proofed to a larger extent.
+
+
+13-013
+
+   -dust-suffix-late
+      implements low complexity filtering after initial adapter matching
+      and quality trimming. Some protocols require this.
+
+   -dust-suffix and -dust-suffix-late
+      accept a new syntax, e.g. -dust-suffix-late 20/A will only
+      recognise low complexity sequence that is A-dominated.
+
+   -5p-insert
+      The 5p insert matching has been improved; the (fourth) offset parameter now
+      strictly regulates the offset within the read. It sets the amount of
+      additional bases in the read beyond the length of the insert that are
+      allowed to participate in matching.
+
+
+12-321
+
+   *  Fixed bug where various types of trimming such as N-trimming would
+      lead to an off-by-one length threshold comparison. This meant
+      that reads reduced to 29 bases by N-trimming would erroneously
+      pass a length cutoff of 30.
+
+
+12-083
+
+   --keep-all
+      Should keep all reads. Reads that are normally discarded (due e.g. to tabu
+      presence or 5p sequence insert absence) will be empty.
+      It is possible to convert empty reads to a single 'N' by using %E as
+      output directive (see below).
+
+   -record-format and -record-format2 have been interchanged.
+      (-record-format2, now called -record-format, is the much more useful one).
+
+   -length  <int>
+      trims reads down to length at most <int>
+         Possible extension could be <a>-<b>
+         meaning: discard anything smaller than <a>, trim back to <b>.
+
+   %A -record-format directive
+      Skips any leading space, then takes the rest of the line
+      and stows it in the annotation field.
+      This can be output using the -format-clean and -format-lint %A directives.
+
+      Typical usage is for FASTA style identifiers:
+      "%I%A%n"
+
+      note that it is not necessary to specify the blanks inbetween identifier
+      and annotation; if no annotation nor blank is present after the identifier,
+      the annotation field will simply be empty.
+
+   %a -record-format directive
+      Copies the content of the most recently skipped field on accord
+      of either %G or %F into the annotation field.
+      This can be output using the -format-clean and -format-lint %A directives.
+
+   %E is either the clean read, or a single "N" if the read is discarded (e.g. due
+      to tabu presence or missing 5p sequence sinsert whilst using --keep-all)
+      or truncated to length zero (e.g. entirely poly-A).  This is a bit
+      speculative and defensive, half expecting that other software might not
+      be be able to cope with emtpy reads.
+
+
+   sw.c
+      N's no longer align with N's.
+
+   sw.c
+      will trim dangly bits of either end of the alignment.  For example
+      |x|-|||||--|| will have four alignlets removed on each side.
+
+   sw.c
+      Default match/edit/gap costs and penalties have been changed to 4/1/3
+
+   sw.c
+      changed to take leftmost cell with highest score.
+
+
