@@ -23,7 +23,7 @@ def is_within(val, ref, tol=0.1):
 # que procesa un archivo CSV y escribe resultados en output_handle
 def process_csv(csv_path, output_handle):
     dirpath = os.path.dirname(csv_path)
-    with open(csv_path, newLine='') as f:
+    with open(csv_path, newline='') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
             if not is_within(row.get('Length'), row.get('Ref_legth')):
