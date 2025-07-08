@@ -5,6 +5,8 @@ import glob
 import subprocess
 import sys
 
+
+
 def main():
     base_dir = '/home/jesteban/Jav/DatasetClor/Automatizer/EnsambladorAutonomo'
     oneline_dir = os.path.join(base_dir, 'Oneline')
