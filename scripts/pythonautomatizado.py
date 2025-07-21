@@ -65,8 +65,8 @@ tally_results: list[Path] = []
 for idx, (f1, f2) in enumerate(pairs, start=1):
 	name = Path(f1).name  # "C2LWJACXX_5_1_1.fastq.gz"
 	base = name[:-len(".fastq.gz")]  # "C2LWJACXX_5_1_1"
-	out1 = TALLY_DIR / f"{base}R.fastq.gz"
-	out2 = TALLY_DIR / f"{base}R.fastq.gz"
+	out1 = TALLY_DIR / f"{base}_1R.fastq.gz"
+	out2 = TALLY_DIR / f"{base}_2R.fastq.gz"
 
 	print(f"[{idx}/{len(pairs)}] Tally: {base}")
 	subprocess.run([
@@ -160,14 +160,14 @@ for seq_in in range(0, len(trim_paired), 2):
 		print(f"No existe el directorio {out_dir}")
 end = time.time()
 print(f"El tiempo transcurrido en este proceso a sido: {end-start:.1f}s\n")
-
+'''
 #Fase 6. Eliminamos ficheros intermedios para evitar la acumulacion de fastq de gran tamaño.
 print("[INFO] Eliminando ficheros temporales…")
 for tmp in tally_results + trim_unpaired:
     try:
         tmp.unlink(missing_ok=True)
     except Exception as e:
-        print(f"   ⚠️  No se pudo borrar {tmp}: {e}")
+        print(f" No se pudo borrar {tmp}: {e}")'''
 
 #Fase 7. Resumen final.
 def print_summary():
@@ -216,4 +216,24 @@ else:
 
 print("Pipeline completado.")
 print_summary()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
