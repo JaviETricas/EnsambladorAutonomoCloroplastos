@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 from __future__ import annotations
 import os
 import subprocess
@@ -9,14 +8,12 @@ import sys
 import glob
 from pathlib import Path
 
-
 # 1. Generamos rutas relativas para que sea portable.
 SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/Script
 ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
 LIB_DIR    = ROOT_DIR / "libreris"
 TMP_DIR    = ROOT_DIR / "temporalDocs"
 RES_DIR    = ROOT_DIR / "resultados"
-
 PAIRS_FILE = SCRIPT_DIR / "parejas.txt"
 
 # Ejecutables y recursos
@@ -32,7 +29,7 @@ BLAST_DB             = ROOT_DIR / "cloroplasto_referencia" / "mi_bd"
 TALLY_DIR = TMP_DIR / "tally"
 TRIM_DIR  = TMP_DIR / "trimmomatic"
 SEQ_DIR   = TMP_DIR / "seq_crumbs"  # Reservado por si se activa seqcrumbs
-NOV_DIR   = RES_DIR / "novowrap"
+NOV_DIR   = TMP_DIR / "novowrap"
 
 for d in (TALLY_DIR, TRIM_DIR, SEQ_DIR, NOV_DIR):
     d.mkdir(parents=True, exist_ok=True)
@@ -68,8 +65,8 @@ tally_results: list[Path] = []
 for idx, (f1, f2) in enumerate(pairs, start=1):
 	name = Path(f1).name  # "C2LWJACXX_5_1_1.fastq.gz"
 	base = name[:-len(".fastq.gz")]  # "C2LWJACXX_5_1_1"
-	out1 = TALLY_DIR / f"{base}_R1.fastq.gz"
-	out2 = TALLY_DIR / f"{base}_R2.fastq.gz"
+	out1 = TALLY_DIR / f"{base}R.fastq.gz"
+	out2 = TALLY_DIR / f"{base}R.fastq.gz"
 
 	print(f"[{idx}/{len(pairs)}] Tally: {base}")
 	subprocess.run([
@@ -93,7 +90,7 @@ trim_unpaired: list[Path] = []
 
 for i in range(0, len(tally_results), 2):
 	t1, t2 = tally_results[i], tally_results[i+1]
-	base = Path(t1).stem.replace("_R1", "" )
+	base = Path(t1).stem.replace("_1R.fastq.gz", "" )
 
 	pep1 = TRIM_DIR / f"{base}_pareado_1.fastq.gz"
 	upe1 = TRIM_DIR / f"{base}_unpareado_1.fastq.gz"
@@ -119,13 +116,12 @@ for i in range(0, len(tally_results), 2):
 end = time.time()
 print(f"Tiempo del proceso Trimmomatic: {end-start:.1f}s\n")
 
-
 # Fase 5. NOVOWrap Crear consenso frente al cloroplasto.
 start = time.time()
 novowrap_results: list[Path] = []
 for seq_in in range(0, len(trim_paired), 2):
 	in1, in2 = trim_paired[seq_in], trim_paired[seq_in + 1]
-	base = Path(in1).stem.replace("_paired_R1", "")
+	base = Path(in1).stem.replace("_pareado_1.fastq.gz", "")
 	out_dir = NOV_DIR / f"{base}_Novowrap"
 	NOV_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -150,7 +146,6 @@ for seq_in in range(0, len(trim_paired), 2):
 		print("stderr:", proc.stderr)
 		continue
 
-
 	if os.path.isdir(out_dir):
 		fasta_files = glob.glob(os.path.join(out_dir, '**', '*.fasta'), recursive=True)
 		if fasta_files:
@@ -166,7 +161,6 @@ for seq_in in range(0, len(trim_paired), 2):
 end = time.time()
 print(f"El tiempo transcurrido en este proceso a sido: {end-start:.1f}s\n")
 
-
 #Fase 6. Eliminamos ficheros intermedios para evitar la acumulacion de fastq de gran tamaño.
 print("[INFO] Eliminando ficheros temporales…")
 for tmp in tally_results + trim_unpaired:
@@ -174,7 +168,6 @@ for tmp in tally_results + trim_unpaired:
         tmp.unlink(missing_ok=True)
     except Exception as e:
         print(f"   ⚠️  No se pudo borrar {tmp}: {e}")
-
 
 #Fase 7. Resumen final.
 def print_summary():
@@ -192,19 +185,16 @@ def print_summary():
 	for path in novowrap_results:
 		print(f" {path}")
 	
-
-
 # Fase 8. Selección de FASTAs generadas con NOVOwrap
-
 selection_script = Path(__file__).parent / "SeleccionNovowrap.py"
 # Nombre del .txt de salida que generará el script de selección
-output_list = Path("lista_seleccion_novowrap.txt")
+output_list = Path("Errores_de_novowrap.txt")
 
 # Construimos el comando:
 cmd_select = [
     "python3",
     str(selection_script),
-    "-r", str(NOV_DIR),          # raíz de búsqueda: carpeta con todos los *_Novowrap
+    "-r", str(out_dir),          #si usas NOV_DIR accede a la raíz de búsqueda: carpeta con todos los *_Novowrap
     "-o", str(output_list)       # fichero de salida
 ]
 
@@ -223,7 +213,6 @@ if result.returncode != 0:
     print(" stderr:", result.stderr)
 else:
     print(f"[SELECT] Selección completada. FASTAs listados en: {output_list}")
-
 
 print("Pipeline completado.")
 print_summary()
