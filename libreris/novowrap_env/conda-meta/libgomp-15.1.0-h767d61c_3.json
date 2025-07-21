@@ -1,0 +1,56 @@
+{
+  "build": "h767d61c_3",
+  "build_number": 3,
+  "channel": "https://conda.anaconda.org/conda-forge/noarch",
+  "constrains": [],
+  "depends": [
+    "__glibc >=2.17,<3.0.a0"
+  ],
+  "extracted_package_dir": "/home/jesteban/miniconda3/pkgs/libgomp-15.1.0-h767d61c_3",
+  "files": [
+    "lib/libgomp.so",
+    "lib/libgomp.so.1.0.0",
+    "share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION.gomp_copy"
+  ],
+  "fn": "libgomp-15.1.0-h767d61c_3.conda",
+  "license": "GPL-3.0-only WITH GCC-exception-3.1",
+  "link": {
+    "source": "/home/jesteban/miniconda3/pkgs/libgomp-15.1.0-h767d61c_3",
+    "type": 1
+  },
+  "md5": "3cd1a7238a0dd3d0860fdefc496cc854",
+  "name": "libgomp",
+  "package_tarball_full_path": "/home/jesteban/miniconda3/pkgs/libgomp-15.1.0-h767d61c_3.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "lib/libgomp.so",
+        "path_type": "softlink",
+        "sha256": "f97ff3634099ed2ded13e2da1e19472a20bc63e873007b764cccc532f542a451",
+        "size_in_bytes": 1160472
+      },
+      {
+        "_path": "lib/libgomp.so.1.0.0",
+        "path_type": "hardlink",
+        "sha256": "f97ff3634099ed2ded13e2da1e19472a20bc63e873007b764cccc532f542a451",
+        "sha256_in_prefix": "f97ff3634099ed2ded13e2da1e19472a20bc63e873007b764cccc532f542a451",
+        "size_in_bytes": 1160472
+      },
+      {
+        "_path": "share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION.gomp_copy",
+        "path_type": "hardlink",
+        "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+        "sha256_in_prefix": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+        "size_in_bytes": 3324
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "43710ab4de0cd7ff8467abff8d11e7bb0e36569df04ce1c099d48601818f11d1",
+  "size": 447068,
+  "subdir": "linux-64",
+  "timestamp": 1750808138000,
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/libgomp-15.1.0-h767d61c_3.conda",
+  "version": "15.1.0"
+}

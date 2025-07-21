@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+import runpy, sys
+runpy.run_module("novowrap", run_name="__main__")

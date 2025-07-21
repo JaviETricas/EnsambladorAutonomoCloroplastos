@@ -1,0 +1,52 @@
+{
+  "build": "h1423503_5",
+  "build_number": 5,
+  "channel": "https://conda.anaconda.org/conda-forge/noarch",
+  "constrains": [
+    "binutils_impl_linux-64 2.43"
+  ],
+  "depends": [
+    "__glibc >=2.17,<3.0.a0"
+  ],
+  "extracted_package_dir": "/home/jesteban/miniconda3/pkgs/ld_impl_linux-64-2.43-h1423503_5",
+  "files": [
+    "bin/x86_64-conda-linux-gnu-ld",
+    "x86_64-conda-linux-gnu/bin/ld"
+  ],
+  "fn": "ld_impl_linux-64-2.43-h1423503_5.conda",
+  "license": "GPL-3.0-only",
+  "link": {
+    "source": "/home/jesteban/miniconda3/pkgs/ld_impl_linux-64-2.43-h1423503_5",
+    "type": 1
+  },
+  "md5": "6dc9e1305e7d3129af4ad0dabda30e56",
+  "name": "ld_impl_linux-64",
+  "package_tarball_full_path": "/home/jesteban/miniconda3/pkgs/ld_impl_linux-64-2.43-h1423503_5.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/x86_64-conda-linux-gnu-ld",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/binutils_split_1749857769680/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placeh",
+        "sha256": "59aa35d4b481956e0ca57a0dd8e352fe1f6a00702abff51ec43c9cd0e86ff103",
+        "sha256_in_prefix": "320ebcd2a540f8f181e72b54a254e02bc5dfdda4f294ffd1c31bacc4820c55d1",
+        "size_in_bytes": 3318336
+      },
+      {
+        "_path": "x86_64-conda-linux-gnu/bin/ld",
+        "path_type": "softlink",
+        "sha256": "59aa35d4b481956e0ca57a0dd8e352fe1f6a00702abff51ec43c9cd0e86ff103",
+        "size_in_bytes": 3318336
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "dcd2b1a065bbf5c54004ddf6551c775a8eb6993c8298ca8a6b92041ed413f785",
+  "size": 670635,
+  "subdir": "linux-64",
+  "timestamp": 1749858327000,
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/ld_impl_linux-64-2.43-h1423503_5.conda",
+  "version": "2.43"
+}
