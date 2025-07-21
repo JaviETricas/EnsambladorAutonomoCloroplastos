@@ -32,12 +32,10 @@ def fasta_to_oneline_py(src: str, dst: str) -> None:
         if seq_parts:
             fo.write("".join(seq_parts) + "\n")
 
-
 def fasta_to_oneline_awk(src: str, dst: str) -> None:
     AWK_SCRIPT = '/^>/ { if (seq) print seq; print; seq=""; next } { seq = seq $0 } END { print seq }'
     with open(dst, "w", encoding="utf-8") as fo:
         subprocess.run(["awk", AWK_SCRIPT, src], stdout=fo, check=True)
-
 
 def pick_oneline_backend(force_awk: bool):
     has_awk = shutil.which("awk") is not None
@@ -48,7 +46,6 @@ def pick_oneline_backend(force_awk: bool):
         return fasta_to_oneline_py
     return fasta_to_oneline_awk if force_awk else fasta_to_oneline_py
 
-
 def _normalize(name: str) -> str:
     n = name
     n = re.sub(r"Option_\d+_", "", n)
@@ -57,7 +54,6 @@ def _normalize(name: str) -> str:
     n = re.sub(r"\.fastq(?:\.gz)?_?", "_", n)
     n = re.sub(r"\.(fasta|fa|tsv|txt|fai)$", "", n)
     return n
-
 
 def pair_fasta_tsv(fasta_dir: str, tsv_dir: str, strict: bool) -> List[Tuple[str, str]]:
     fastas = glob.glob(os.path.join(fasta_dir, "*.fasta"))
@@ -139,9 +135,34 @@ def apply_mutations(fasta_in: str, fasta_out: str, muts: Dict[int, str]) -> None
         fo.write(header)
         fo.write("".join(seq) + "\n")
 
+def rename_headers(fasta_in: str, fasta_out: str, species: str) -> None:
+    """Reescribe las cabeceras de un FASTA con el formato:
+    >{species}, <longitud_secuencia>
+    donde *longitud_secuencia* es el número de caracteres de la secuencia
+    hasta la siguiente cabecera (o fin de archivo).
+    """
+    with open(fasta_in, encoding="utf-8", errors="replace") as fi, \
+         open(fasta_out, "w", encoding="utf-8") as fo:
+        seq_parts: List[str] = []
+        for line in fi:
+            if line.startswith(">"):
+                # Vuelca cualquier registro pendiente
+                if seq_parts:
+                    seq = "".join(seq_parts)
+                    fo.write(f">{species}, {len(seq)}\n")
+                    fo.write(seq + "\n")
+                    seq_parts.clear()
+                # Ignoramos la cabecera original: el nuevo nombre se escribirá
+                # cuando tengamos la longitud de la secuencia.
+            else:
+                seq_parts.append(line.strip())
+        # Último registro
+        if seq_parts:
+            seq = "".join(seq_parts)
+            fo.write(f">{species}, {len(seq)}\n")
+            fo.write(seq + "\n")
 
-
-def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state):
+def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state, species: str):
     base = os.path.splitext(os.path.basename(fa_path))[0]
     tmp_oneline = os.path.join(dirs['oneline'], f"{base}_oneline.fasta")
 
@@ -153,11 +174,16 @@ def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state):
     print(f"[2/4] {base}: aplicando {len(muts)} mutaciones…")
     apply_mutations(tmp_oneline, corrected, muts)
 
+    # Renombrado de cabeceras
+    renamed = os.path.join(dirs['oneline'], f"{base}_corr_renamed.fasta")
+    print(f"[3/4] {base}: renombrando cabeceras…")
+    rename_headers(corrected, renamed, species)
+
     new_idx = fusion_state['index'] + 1
     fused_out = os.path.join(dirs['fused_out'], f"Fusion_Cloroplastos_{new_idx}.fasta")
-    print(f"[3/4] {base}: fusionando → Fusion_{new_idx}.fasta")
+    print(f"[4/4] {base}: fusionando → Fusion_{new_idx}.fasta")
     with open(fused_out, "wb") as fo:
-        for frag in (fusion_state['file'], corrected):
+        for frag in (fusion_state['file'], renamed):
             with open(frag, "rb") as fi:
                 shutil.copyfileobj(fi, fo)
     fusion_state.update(index=new_idx, file=fused_out)
@@ -165,7 +191,7 @@ def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state):
 
 
 def run_mafft(in_fasta: str, out_fasta: str):
-    print(f"[4/4] Ejecutando MAFFT…")
+    print("[MAFFT] Ejecutando MAFFT…")
     with open(out_fasta, "w", encoding="utf-8") as fo:
         subprocess.run(["mafft", in_fasta], stdout=fo, check=True)
 
@@ -174,9 +200,13 @@ def run_mafft(in_fasta: str, out_fasta: str):
 def main():
     ap = argparse.ArgumentParser("Fusionador de cloroplastos + corrección TSV")
     ap.add_argument("--fasta", help="Archivo FASTA de cloroplasto")
-    ap.add_argument("--tsv", help="Archivo TSV con mutaciones")
+    ap.add_argument("--tsv",   help="Archivo TSV con mutaciones")
     ap.add_argument("--use-awk", action="store_true")
-    ap.add_argument("--strict-pairing", action="store_true")
+    ap.add_argument("--strict-pairing", action="store_true", help="Emparejamiento estricto: solo parejas exactas FASTA↔TSV")
+    # Nueva opción para el nombre de la especie
+    ap.add_argument("--species", default="Hurdeum vulgare",
+                    help="Nombre de la especie para las cabeceras FASTA (por defecto: 'Hurdeum vulgare')")
+
     args = ap.parse_args()
 
     script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -226,7 +256,6 @@ def main():
         subprocess.run(["seaview", final_aln])
     else:
         print("Seaview no encontrado; abre el fichero manualmente si lo deseas")
-
 
 if __name__ == "__main__":
     main()
