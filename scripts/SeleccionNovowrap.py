@@ -1,10 +1,20 @@
-#!/usr/bin/env python3
+!/usr/bin/env python3
 
 import os
 import csv
 import argparse
 import shutil
 from pathlib import Path
+
+
+# 1. Generamos rutas relativas para que sea portable.
+SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/Script
+ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
+TMP_DIR    = ROOT_DIR / "temporalDocs"
+
+
+
+NOV_DIR   = TMP_DIR / "novowrap"
 
 # Función que comprueba si un valor está dentro de +-tol*ref
 def is_within(val, ref, tol=0.1):
@@ -86,10 +96,7 @@ def main(root_dir='.', output_txt='failed_folders.txt'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Select FASTA based on CSV criteria')
-    parser.add_argument('-r', '--root', default='.', help='Directorio raíz de búsqueda')
-    parser.add_argument('-o', '--output', default='Errores_de_novowrap.txt', help='TXT de carpetas sin coincidencias')
+    parser.add_argument('-r', '--root', default= NOV_DIR, help='Directorio raíz de búsqueda')
+    parser.add_argument('-o', '--output', default= SCRIPT_DIR / 'Errores_de_novowrap.txt', help='TXT de carpetas sin coincidencias')
     args = parser.parse_args()
     main(root_dir=args.root, output_txt=args.output)
-
-
-
