@@ -1,5 +1,4 @@
-#!/usr/bin/env python 3
-
+#!/usr/bin/env python3
 
 import os
 import csv
@@ -7,105 +6,88 @@ import argparse
 import shutil
 from pathlib import Path
 
-# Definimos la función is_within con parámetros (val, ref, tol=0.1)
-# que comprueba si val está dentro de un tolerancia tol de ref
+# Función que comprueba si un valor está dentro de +-tol*ref
 def is_within(val, ref, tol=0.1):
     try:
         val = float(val)
         ref = float(ref)
-
+    #Si falla la conversion devolver false.
     except (ValueError, TypeError):
         return False
-
     return abs(val - ref) <= tol * abs(ref)
 
-# Definimos la función process_csv con parámetros (csv_path, output_handle)
-# que procesa un archivo CSV y escribe resultados en output_handle
-def process_csv(csv_path, output_handle):
-    dirpath = os.path.dirname(csv_path)
+# Procesa un CSV y copia el FASTA correspondiente o anota la carpeta si no hay coincidencias
+def process_csv(csv_path, output_handle, dest_dir):
+    dirpath = Path(csv_path).parent
+    found = False
+
+    print(f"Cargando documento .csv: {csv_path}")
+
+    # Lee el CSV usando DictReader
     with open(csv_path, newline='') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
-            if not is_within(row.get('Length'), row.get('Ref_legth')):
+            # Revisa Length vs Ref_length
+            if not is_within(row.get('Length'), row.get('Ref_length')):
                 continue
 
+            # Cuenta métricas adicionales dentro de tolerancia
             metrics = ['LSC', 'IRa', 'SSC', 'IRb']
             r_metrics = ['r_LSC', 'r_IRa', 'r_SSC', 'r_IRb']
-            count_close = 0
-            for m, rn in zip(metrics, r_metrics):
-                if is_within(row.get(m), row.get(rm)):
-                    #Si no supera esa diferencia se suma 1 a count_close
-                    count_close += 1
+            count_close = sum(
+                1 for m, rn in zip(metrics, r_metrics)
+                if is_within(row.get(m), row.get(rn))
+            )
             if count_close < 3:
                 continue
 
+            # Nombre base del FASTA
             input_name = row.get('Input')
             if not input_name:
                 continue
 
-            #Nos aseguramos que sea fasta.
-            fasta_file = os.path.join(dirpath, f"{input_name}.fasta")
-            if not os.path.isfile(fasta_file):
-
-                for fname in os.listdir(dirpath):
-                    if fname.startswith(input_name) and fname.lower().endswith('.fasta'):
-                        fasta_file = os.path.join(dirpath, fname)
+            # Busca archivo .fasta en el mismo directorio
+            fasta_file = dirpath / f"{input_name}.fasta"
+            if not fasta_file.is_file():
+                for fname in dirpath.iterdir():
+                    if fname.name.startswith(input_name) and fname.suffix.lower() == '.fasta':
+                        fasta_file = fname
                         break
 
-
-            # Una vez encontremos el .fasta lo añadimos al output
-            if os.path.isfile(fasta_file):
-                output_handle.write(fasta_file + '\n')
-
-            else:
-                output_handle.write(f"# FASTA not found {input_name} in {dirpath}\n")
-            found = True
-            
+            # Si lo encontramos, copiamos y avisamos
+            if fasta_file.is_file():
+                dest_dir.mkdir(parents=True, exist_ok=True)
+                dest_path = dest_dir / fasta_file.name
+                shutil.copy2(fasta_file, dest_path)
+                print(f"[COPY] Copiado {fasta_file} → {dest_path}")
+                found = True
             break
 
-            # Si no se encontro ningun reistro valido en el CSV, anotamos la carpeta fallida
+    # Si no se encontró ningún registro válido, anotamos carpeta y mensaje
     if not found:
-        output_handle.write(f" Cloroplastos sin coincidencias tras novowrap: {dirpath}\n")
-            
+        print(f"La carpeta '{dirpath}' no tiene ningún documento válido.")
+        output_handle.write(str(dirpath) + '\n')
 
-# Definimos la función principal main con parámetros (root_dir, output_txt)
-# que recorre el directorio raíz y llama a process_csv para cada CSV
-def main(root_dir='.', output_txt='selected_fasta_list.txt'):
+# Función principal: recorre root_dir y procesa cada CSV
+def main(root_dir='.', output_txt='failed_folders.txt'):
+    # Directorio donde copiar FASTAs seleccionados
+    print (f" root_dir: {root_dir}")
+    print (f" output_txt: {output_txt}")
+    dest_dir = Path('..') / 'temporalDocs' / 'Novowrapselection'
+
+    # Archivo para anotar carpetas sin coincidencias
     with open(output_txt, 'w') as out_f:
-            for dirpath, _, files in os.walk(root_dir):
-                for fname in files:
-                    # Si es un CSV
-                    if fname.lower().endswith('.csv'):
-                        csv_path = os.path.join(dirpath, fname)
-                        process_csv(csv_path, out_f)
+        for dirpath, _, files in os.walk(root_dir):
+            for fname in files:
+                if fname.lower().endswith('.csv'):
+                    process_csv(os.path.join(dirpath, fname), out_f, dest_dir)
 
-    print(f"Seleccion completada. Resultados en {output_txt}")
+    print(f"Procesamiento de selección completado. Carpetas sin coincidencias en: {output_txt}")
 
-    dest_dir = Path("..") / "temporalDocs" / "Novowrapselection"
-    dest_dir.mkdir(parents=True, exist_ok=True)
-
-    # abre el fichero de resultados con la lista y copia los seleccionados en la carpeta
-    with open(output_txt, 'r') as list_handle:
-        for line in list_handle:
-            fasta_path = line.strip()
-            if not fasta_path or fasta_path.startswith('#'):
-                continue
-            src = Path(fasta_path)
-            if src.is_file():
-                dest = dest_dir / src.name
-                shutil.copy2(src, dest)
-                print(f"[COPY] Copiado {src} → {dest}")
-            else:
-                print(f"[COPY] ¡No encontrado! {src}")
-
-
-
-# Si este script se ejecuta directamente
 if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser(description='Select FASTA files based on CSV criteria')
-    parser.add_argument('-r', '--root', default='.', help='Root directory to search')
-    parser.add_argument('-o', '--output', default='selected_fasta_list.txt', help='Output TXT file')
+    parser = argparse.ArgumentParser(description='Select FASTA based on CSV criteria')
+    parser.add_argument('-r', '--root', default='.', help='Directorio raíz de búsqueda')
+    parser.add_argument('-o', '--output', default='Errores_de_novowrap.txt', help='TXT de carpetas sin coincidencias')
     args = parser.parse_args()
     main(root_dir=args.root, output_txt=args.output)
 
