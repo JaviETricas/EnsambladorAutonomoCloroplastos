@@ -83,35 +83,27 @@ def write_pair_file(pair):
         # Escribe las rutas f1 y f2 y salta de linea
         f.write(f"{f1},{f2}\n")
 
+def save_pairs(pairs, filename=PAIRS_FILE):
+    """Guarda todas las parejas en un solo paso."""
+    # Asegúrate de que la carpeta existe
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    with open(filename, 'w') as fh:          # 'w' = sobrescribir en cada ejecución
+        for f1, f2 in pairs:
+            fh.write(f"{f1},{f2}\n")
+
 # Funcion principal que coordina la entrada procesamiento y ejecucion final
 def main():
     # ans es el input de esa frase
     ans = input('¿Quieres introducir manualmente dos archivos .fasta.gz? [y/n]: ').strip().lower()
-    # Si ans empieza por y
-    if ans.startswith('y'):
-        # Ejecuta la funcion manual
-        pairs = input_pairs_manual()
-    # Si no, la funcion directorios
-    else:
-        pairs = discover_pairs_in_dir()
+    pairs = input_pairs_manual() if ans.startswith('y') else discover_pairs_in_dir()
 
-    # Si no existen parejas: informa y sal de la funcion.
     if not pairs:
         print('No se encontraron parejas. Saliendo.')
         return
 
-    #Escribe todas las parejas procesadas
-    print(f"Total parejas a procesar: {len(pairs)}")
+    print(f"Total parejas encontradas: {len(pairs)}")
 
-# lee todas las parejas del fichero 'parejas.txt'
-    with open(PAIRS_FILE) as fh:
-        pairs = [tuple(line.strip().split(',')) for line in fh if line.strip()]
-
-    if not pairs:
-        print("El fichero parejas.txt está vacío.")
-        return
-
-    print(f"Total parejas a procesar: {len(pairs)}")
+    save_pairs(pairs)    
 
     for idx, (f1, f2) in enumerate(pairs, start=1):
         print(f"\nProcesando pareja {idx}/{len(pairs)}")
