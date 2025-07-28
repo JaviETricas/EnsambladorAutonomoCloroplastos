@@ -18,14 +18,27 @@ y posteriormente ejecutar el cargadordearchivos.py y pasarle manualmente la dire
 fastq.gz o pasarle una carpeta con los pareados nombrados igual pero acabados en _1.fastq.gz o _2.fastq.gz para 
 que el programa los detecte automaticamente y los procese.
 
-Descripcion.
+## Índice
+- [Descripción](#descripcion)
+- [Instalación](#instalacion)
+- [Uso general](#uso-general)
+- [Casos de uso](#casos-de-uso)
+- [Características avanzadas](#caracteristicas-avanzadas)
+- [Limitaciones](#limitaciones)
 
-Instalacion.
+## Descripción  <!-- id="descripcion" -->
+…
 
-Uso general.
+## Instalación  <!-- id="instalacion" -->
+…
 
-Casos de uso.
+## Uso general  <!-- id="uso-general" -->
+…
 
-Caracteristicas avanzadas.
+## Casos de uso  <!-- id="casos-de-uso" -->
+…
 
-Limitaciones.
+## Características avanzadas  <!-- id="caracteristicas-avanzadas" -->
+…
+
+## Limitaciones  <!-- id="limitaciones" -->
