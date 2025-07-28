@@ -25,7 +25,7 @@ generar error, y corrige los fallos de estos.
 Por ultimo antes de alinear cambia el nombre al nombre de la especie + nombre del archivo + numero de bases del
 coting.
 
-## Instalación  <!-- id="instalacion" -->
+## Instalacion
 
 La herramienta actualmente no se encuentra fuera de github, por lo que a la hora de instalar solo se puede 
 descargando este repositorio.
@@ -39,7 +39,7 @@ Porteriormente te pide que le pases una pareja de archivos .fastq.gz de manera m
 si usas esta segunda opcion los archivos tienen que acabar en _1.fastq.gz _2.fasq.gz para que los localize 
 automaticamente y los empareje
 
-## Casos de uso  <!-- id="casos-de-uso" -->
+## Casos de uso
 
 El programa funciona actualmente solo con fastq.gz pareados, en linux y para el ensamblaje de cloroplastos. Los
 comandos de las herramientas originales estan limitados, asi que el principal caso de uso es el de tener que hacer
@@ -47,12 +47,12 @@ un ensamblaje de cloroplastos con un gran volumen de archivos en el formato indi
 correr el programa durante horas o dias asta tener los archivos resultantes correctos, y una lista con los archivos
 fallidos para usar herramientas mas especificas.
 
-## Características avanzadas  <!-- id="caracteristicas-avanzadas" -->
+## Caracteristicas avanzadas
 
 En la actualidad usa un cloroplasto de hurdeum vulgare como referencia para reconstruir el cloroplasto. Para cambiar
 esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cloroplasto_referencia en formato gb
 
-# Argumentos de scripts.
+# Argumentos de scripts
   **instaladordependecias**
   
     ``` 
@@ -61,7 +61,7 @@ esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cl
 
 
 
-## Limitaciones  <!-- id="limitaciones" -->
+## Limitaciones
 
 No dispone de una herramienta de argumentos completa, y para usar los argumentos tienes que ejecutar los diferentes
 scripts por separado. Tampoco dispone de portabilidad total a windows.
