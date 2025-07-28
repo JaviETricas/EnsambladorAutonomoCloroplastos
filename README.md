@@ -1,7 +1,5 @@
 ## EnsambladorAutonomoCloroplastos.
-[![PyPI version]
- (https://img.shields.io/pypi/v/mi-paquete)]
- (https://pypi.org/project/mi-paquete)
+[![PyPI version] (https://img.shields.io/pypi/v/mi-paquete)] (https://pypi.org/project/mi-paquete)
 
 
 ## Índice
@@ -57,10 +55,10 @@ esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cl
 
 # Argumentos de scripts.
   instaladordependecias:
-    ```python
+    ```py
     # Reinstalar todas las dependencias.
     ./instaladordependencias.py --force
-
+    ```  
 
 
 ## Limitaciones  <!-- id="limitaciones" -->
