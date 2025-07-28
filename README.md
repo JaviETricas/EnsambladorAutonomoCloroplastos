@@ -17,3 +17,15 @@ se pueden usar, pero para poder hacerlo funcionar solo se requiere ejecutar el s
 y posteriormente ejecutar el cargadordearchivos.py y pasarle manualmente la direccion de los pareados en formato
 fastq.gz o pasarle una carpeta con los pareados nombrados igual pero acabados en _1.fastq.gz o _2.fastq.gz para 
 que el programa los detecte automaticamente y los procese.
+
+Descripcion.
+
+Instalacion.
+
+Uso general.
+
+Casos de uso.
+
+Caracteristicas avanzadas.
+
+Limitaciones.
