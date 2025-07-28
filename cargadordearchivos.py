@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 SCRIPT_DIR   = Path(__file__).resolve().parent
@@ -11,6 +12,8 @@ AUTO_SCRIPT  = AUTO_DIR / "pythonautomatizado.py"
 SELEC_SCRIPT = AUTO_DIR / "SeleccionNovowrap.py"
 NOVOWRAP_DIR = SCRIPT_DIR / 'temporalDocs' / 'Novowrapselection'
 BAMTSV       = AUTO_DIR   / 'BAMtsv.py'
+TALLY        = AUTO_DIR   / 'tally.py'
+INTALL_DIR   = AUTO_DIR / 'instaladordependencias.py'
 
 #Define la funcion para introducir las rutas de los archivos manualmente.
 def input_pairs_manual():
@@ -104,6 +107,9 @@ def main():
     print(f"Total parejas encontradas: {len(pairs)}")
 
     save_pairs(pairs)    
+
+    subprocess.run([sys.executable, str(INTALL_DIR)], check=True)
+    subprocess.run([sys.executable, str(TALLY)], check=True)
 
     for idx, (f1, f2) in enumerate(pairs, start=1):
         print(f"\nProcesando pareja {idx}/{len(pairs)}")
