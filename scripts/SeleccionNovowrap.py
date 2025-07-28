@@ -99,7 +99,7 @@ def main(root_dir='.', output_txt='failed_folders.txt'):
         for dirpath, _, files in os.walk(root_dir):
             for fname in files:
                 if fname.lower().endswith('.csv'):
-                    process_csv(os.path.join(dirpath, fname), out_f, dest_dir)
+                    process_csv(os.path.join(dirpath, fname), out_f, dest_dir, dest_fail)
 
     print(f"Procesamiento de selección completado. Carpetas sin coincidencias en: {output_txt}")
 
