@@ -10,7 +10,7 @@
 - [Características avanzadas](#caracteristicas-avanzadas)
 - [Limitaciones](#limitaciones)
 
-## Descripción  <!-- id="descripcion" -->
+## Descripcion
 
 Esta herramienta lo que hace es juntar una serie de herramientas para realizar la tarea de obtencion del genoma 
 del cloroplasto circular y alinearlo con un cloroplasto de referencia.
@@ -30,7 +30,7 @@ coting.
 La herramienta actualmente no se encuentra fuera de github, por lo que a la hora de instalar solo se puede 
 descargando este repositorio.
 
-## Uso general  <!-- id="uso-general" -->
+## Uso general
 
 Para ejecutar el programa de manera general se tiene que ejecutar el script cargadordearchivos.py este se encarga 
 de instalar las dependencias necesarias.
