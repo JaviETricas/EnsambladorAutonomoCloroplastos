@@ -1,4 +1,8 @@
 ## EnsambladorAutonomoCloroplastos.
+[![PyPI version]
+ (https://img.shields.io/pypi/v/mi-paquete)]
+ (https://pypi.org/project/mi-paquete)
+
 
 ## Índice
 
@@ -50,6 +54,13 @@ fallidos para usar herramientas mas especificas.
 
 En la actualidad usa un cloroplasto de hurdeum vulgare como referencia para reconstruir el cloroplasto. Para cambiar
 esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cloroplasto_referencia en formato gb
+
+# Argumentos de scripts.
+  instaladordependecias:
+    ```python
+    # Reinstalar todas las dependencias.
+    ./instaladordependencias.py --force
+
 
 
 ## Limitaciones  <!-- id="limitaciones" -->
