@@ -55,8 +55,7 @@ esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cl
 # Argumentos de scripts.
   **instaladordependecias**
   
-    ```py
-    # Reinstalar todas las dependencias.
+    ``` # Reinstalar todas las dependencias.
     ./instaladordependencias.py --force
 
 
