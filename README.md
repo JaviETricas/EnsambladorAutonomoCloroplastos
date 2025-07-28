@@ -8,7 +8,7 @@
 - [Uso general](#uso-general)
 - [Casos de uso](#casos-de-uso)
 - [Características avanzadas](#caracteristicas-avanzadas)
- - [Argumentos de scripts](#argumentos-de-scripts)
+. [Argumentos de scripts](#argumentos-de-scripts)
 - [Limitaciones](#limitaciones)
 
 ## Descripcion
