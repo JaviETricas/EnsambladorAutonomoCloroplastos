@@ -8,7 +8,7 @@
 - [Uso general](#uso-general)
 - [Casos de uso](#casos-de-uso)
 - [Características avanzadas](#caracteristicas-avanzadas)
-- [Argumentos de scripts](#argumentos-de-scripts)
+  · [Argumentos de scripts](#argumentos-de-scripts)
 - [Limitaciones](#limitaciones)
 
 ## Descripcion
@@ -53,7 +53,7 @@ fallidos para usar herramientas mas especificas.
 En la actualidad usa un cloroplasto de hurdeum vulgare como referencia para reconstruir el cloroplasto. Para cambiar
 esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cloroplasto_referencia en formato gb
 
-# Argumentos de scripts
+### Argumentos de scripts
   **instaladordependecias**
   
     ``` 
