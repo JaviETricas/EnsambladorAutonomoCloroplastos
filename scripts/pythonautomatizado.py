@@ -17,11 +17,11 @@ RES_DIR    = ROOT_DIR / "resultados"
 PAIRS_FILE = SCRIPT_DIR / "parejas.txt"
 
 # Ejecutables y recursos
-TALLY_EXE            = LIB_DIR / "tally"
+TALLY_EXE            = LIB_DIR / "./tally"
 TRIMMOMATIC_DIR      = LIB_DIR / "Trimmomatic-0.39"
 TRIMMOMATIC_JAR      = TRIMMOMATIC_DIR / "trimmomatic-0.39.jar"
 TRIMMOMATIC_ADAPTERS = TRIMMOMATIC_DIR / "adapters" / "TruSeq3-PE-2.fa"
-NOVOWRAP_EXE         = LIB_DIR / "novowrap_env" / "bin" / "novowrap"
+NOVOWRAP_EXE         = LIB_DIR / "novowrap"
 CLORO_REF_GB         = ROOT_DIR / "cloroplasto_referencia" / "sequence_cloroplasto.gb"
 BLAST_DB             = ROOT_DIR / "cloroplasto_referencia" / "mi_bd"
 
@@ -59,116 +59,111 @@ with open(PAIRS_FILE, 'r') as f:
 		pairs.append((a, b))
 print(f"Cargado {len(pairs)} parejas desde {PAIRS_FILE}")
 
-# Fase 3: Tally Eliminacion de duplicados.
-start = time.time()
-tally_results: list[Path] = []
-for idx, (f1, f2) in enumerate(pairs, start=1):
-	name = Path(f1).name  # "C2LWJACXX_5_1_1.fastq.gz"
-	base = name[:-len(".fastq.gz")]  # "C2LWJACXX_5_1_1"
-	out1 = TALLY_DIR / f"{base}_1R.fastq.gz"
-	out2 = TALLY_DIR / f"{base}_2R.fastq.gz"
-
-	print(f"[{idx}/{len(pairs)}] Tally: {base}")
-	subprocess.run([
-		str(TALLY_EXE),
-		'-i', f1, '-j', f2,
-		'-o', out1, '-p', out2,
-		'--with-quality', '--no-tally', '--pair-by-offset'
-	], check=False)
-	if os.path.isfile(out1) and os.path.isfile(out2):
-		print(f" Se han generado: {out1} {out2}")
-		tally_results.extend([out1, out2])
-	else:
-		print(f"Error en la genracion de {base}")
-end = time.time()
-print(f"El tiempo transcurrido en este proceso a sido: {end-start:.1f}s\n")
-
-# Fase 4: Trimmomatic Recorte de calidad y eliminar adaptadores.
-start = time.time()
-trim_paired: list[Path] = []
-trim_unpaired: list[Path] = []
-
-for i in range(0, len(tally_results), 2):
-	t1, t2 = tally_results[i], tally_results[i+1]
-	base = Path(t1).stem.replace("_1R.fastq.gz", "" )
-
-	pep1 = TRIM_DIR / f"{base}_pareado_1.fastq.gz"
-	upe1 = TRIM_DIR / f"{base}_unpareado_1.fastq.gz"
-	pep2 = TRIM_DIR / f"{base}_pareado_2.fastq.gz"
-	upe2 = TRIM_DIR / f"{base}_unpareado_2.fastq.gz"
-	print(f"Trimmomatic con: {base}")
-	cmd = [
-		'java', '-jar', str(TRIMMOMATIC_JAR), 'PE', '-threads', '12', '-phred33',
-		t1, t2, pep1, upe1, pep2, upe2, f"ILLUMINACLIP:{TRIMMOMATIC_ADAPTERS}:2:30:10", 'LEADING:3', 'TRAILING:3'
-	]
-	subprocess.run(cmd, check=False)
-	if os.path.isfile(pep1) and os.path.isfile(pep2):
-		print(f"Documentos generados correctamente: {pep1}, {pep2}")
-		trim_paired.extend([pep1, pep2])
-	else:
-		print(f"Error de pareamiento documentos {base}")
-	if os.path.isfile(upe1) and os.path.isfile(upe2):
-		print(f"Documentos Unpareados: {upe1}, {upe2}")
-		trim_unpaired.extend([upe1, upe2])
-	else:
-		print(f"Error con los documentos unpareados")
-
-end = time.time()
-print(f"Tiempo del proceso Trimmomatic: {end-start:.1f}s\n")
-
-# Fase 5. NOVOWrap Crear consenso frente al cloroplasto.
-start = time.time()
+# --- después de cargar `pairs` ---------------------------------------------
+tally_results   : list[Path] = []
+trim_paired     : list[Path] = []
+trim_unpaired   : list[Path] = []
 novowrap_results: list[Path] = []
-for seq_in in range(0, len(trim_paired), 2):
-	in1, in2 = trim_paired[seq_in], trim_paired[seq_in + 1]
-	base = Path(in1).stem.replace("_pareado_1.fastq.gz", "")
-	out_dir = NOV_DIR / f"{base}_Novowrap"
-	NOV_DIR.mkdir(parents=True, exist_ok=True)
 
-	print(f"[NOVOwrap] {base}")
-	cmd = [
-		str(NOVOWRAP_EXE),		
-		'-input', in1, in2,
-		'-ref', str(CLORO_REF_GB),
-		'-out', out_dir,
-		'-len_diff', '0.8',
-		'-debug'
-	]
-	proc = subprocess.run(
-		cmd,
-		stdout=subprocess.PIPE,
-		stderr=subprocess.PIPE,
-		text=True
-		)
-	if proc.returncode != 0:
-		print(f"NOVOwrap fallo (returncode={proc.returncode})")
-		print("stdout:", proc.stdout)
-		print("stderr:", proc.stderr)
-		continue
+for idx, (f1, f2) in enumerate(pairs, start=1):
+    print(f"\n=== PAREJA {idx}/{len(pairs)} =========================")
+    start_time = time.time()
+    # ── 1. TALLY ─────────────────────────────────────────────
+    base = Path(f1).stem[:-2]      # recorta el "_1"
+    out1 = TALLY_DIR / f"{base}_1R.fastq.gz"
+    out2 = TALLY_DIR / f"{base}_2R.fastq.gz"
 
-	if os.path.isdir(out_dir):
-		fasta_files = glob.glob(os.path.join(out_dir, '**', '*.fasta'), recursive=True)
-		if fasta_files:
-			print(f" Ensamblado completado. Archivos encontrados:")
-			for f in fasta_files:
-				print (" ", f)
-				novowrap_results.append(f)
-				# Tras NOVOWrap, si generamos algún ensamblado, borramos los temporales
-		else:
-			print(f" No se encontro nada dentro de {out_dir}")
-	else:
-		print(f"No existe el directorio {out_dir}")
-end = time.time()
-print(f"El tiempo transcurrido en este proceso a sido: {end-start:.1f}s\n")
-'''
-#Fase 6. Eliminamos ficheros intermedios para evitar la acumulacion de fastq de gran tamaño.
-print("[INFO] Eliminando ficheros temporales…")
-for tmp in tally_results + trim_unpaired:
-    try:
+    print(f"[TALLY] {base}")
+    subprocess.run([
+        str(TALLY_EXE), '-i', f1, '-j', f2,
+        '-o', out1, '-p', out2,
+        '--with-quality', '--no-tally', '--pair-by-offset'
+    ], check=False)
+    if not (out1.exists() and out2.exists()):
+        print("  ⨯ Error en Tally. Se omite esta pareja.")
+        continue
+    tally_results.extend([out1, out2])
+
+    # ── 2. TRIMMOMATIC ──────────────────────────────────────
+    pep1 = TRIM_DIR / f"{base}_pareado_1.fastq.gz"
+    upe1 = TRIM_DIR / f"{base}_unpareado_1.fastq.gz"
+    pep2 = TRIM_DIR / f"{base}_pareado_2.fastq.gz"
+    upe2 = TRIM_DIR / f"{base}_unpareado_2.fastq.gz"
+
+    print(f"[TRIM] {base}")
+    cmd_trim = [
+        'java', '-jar', str(TRIMMOMATIC_JAR), 'PE', '-threads', '12', '-phred33',
+        out1, out2, pep1, upe1, pep2, upe2,
+        f"ILLUMINACLIP:{TRIMMOMATIC_ADAPTERS}:2:30:10",
+        'LEADING:3', 'TRAILING:3'
+    ]
+    subprocess.run(cmd_trim, check=False)
+    if not (pep1.exists() and pep2.exists()):
+        print("  ⨯ Error en Trimmomatic. Se omite esta pareja.")
+        continue
+    trim_paired.extend([pep1, pep2])
+    trim_unpaired.extend([upe1, upe2])
+
+    # ── 3. NOVOWRAP ─────────────────────────────────────────
+    out_dir = NOV_DIR / f"{base}_Novowrap"
+    print(f"[NOVOwrap] {base}")
+    cmd_novo = [
+        str(NOVOWRAP_EXE),
+        '-input', pep1, pep2,
+        '-ref', str(CLORO_REF_GB),
+        '-out',  out_dir,
+        '-len_diff', '0.8', '-debug'
+    ]
+    proc = subprocess.run(cmd_novo, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE, text=True)
+    if proc.returncode != 0:
+        print("  ⨯ NOVOwrap falló.")
+        continue
+
+    fasta_files = list(out_dir.rglob('*.fasta'))
+    if fasta_files:
+        print("  ✓ Ensamblado completado:")
+        for f in fasta_files:
+            print("    ", f)
+            novowrap_results.append(f)
+    else:
+        print("  ⨯ No se encontraron FASTA; se omite esta pareja.")
+        continue
+    print(f"\nPipeline completado en {time.time()-start_time:.1f}s")
+
+    # ── 4. LIMPIEZA PARCIAL ─────────────────────────────────
+    for tmp in (out1, out2, upe1, upe2):
         tmp.unlink(missing_ok=True)
-    except Exception as e:
-        print(f" No se pudo borrar {tmp}: {e}")'''
 
+    # Fase 8. Selección de FASTAs generadas con NOVOwrap
+    selection_script = Path(__file__).parent / "SeleccionNovowrap.py"
+    # Nombre del .txt de salida que generará el script de selección
+    output_list = Path("Errores_de_novowrap.txt")
+
+    # Construimos el comando:
+    cmd_select = [
+        "python3",
+        str(selection_script),
+        "-r", str(out_dir),          #si usas NOV_DIR accede a la raíz de búsqueda: carpeta con todos los *_Novowrap
+        "-o", str(output_list)       # fichero de salida
+    ]
+
+    print(f"[SELECT] Ejecutando selección de FASTAs: {' '.join(cmd_select)}")
+    result = subprocess.run(
+        cmd_select,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    #Fase 6. Eliminamos ficheros intermedios para evitar la acumulacion de fastq de gran tamaño.
+    print("[INFO] Eliminando ficheros temporales…")
+    for tmp in tally_results + trim_unpaired:
+        try:
+            tmp.unlink(missing_ok=True)
+        except Exception as e:
+            print(f" No se pudo borrar {tmp}: {e}")
+        
 #Fase 7. Resumen final.
 def print_summary():
 	print("\nResumen de resultados:")
@@ -185,26 +180,9 @@ def print_summary():
 	for path in novowrap_results:
 		print(f" {path}")
 	
-# Fase 8. Selección de FASTAs generadas con NOVOwrap
-selection_script = Path(__file__).parent / "SeleccionNovowrap.py"
-# Nombre del .txt de salida que generará el script de selección
-output_list = Path("Errores_de_novowrap.txt")
+print_summary()   
 
-# Construimos el comando:
-cmd_select = [
-    "python3",
-    str(selection_script),
-    "-r", str(out_dir),          #si usas NOV_DIR accede a la raíz de búsqueda: carpeta con todos los *_Novowrap
-    "-o", str(output_list)       # fichero de salida
-]
 
-print(f"[SELECT] Ejecutando selección de FASTAs: {' '.join(cmd_select)}")
-result = subprocess.run(
-    cmd_select,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    text=True,
-)
 
 # Comprobamos éxito o fallo
 if result.returncode != 0:
@@ -216,6 +194,7 @@ else:
 
 print("Pipeline completado.")
 print_summary()
+
 
 
 
