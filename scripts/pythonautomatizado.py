@@ -92,7 +92,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
 
     print(f"[TRIM] {base}")
     cmd_trim = [
-        'java', '-jar', str(TRIMMOMATIC_JAR), 'PE', '-threads', '12', '-phred33',
+        'java', '-jar', str(TRIMMOMATIC_JAR), 'PE', '-threads', '4', '-phred33',
         out1, out2, pep1, upe1, pep2, upe2,
         f"ILLUMINACLIP:{TRIMMOMATIC_ADAPTERS}:2:30:10",
         'LEADING:3', 'TRAILING:3'
