@@ -60,7 +60,14 @@ esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cl
     ./instaladordependencias.py --force
 
 
+  **SeleccionNovowrap**
+    ```
+    # Directorio raiz
+    ./SeleccionNovowrap.py -r
+    # Documento de errores
+    ./SeleccionNovowrap.py -o
 
+    
 ## Limitaciones
 
 No dispone de una herramienta de argumentos completa, y para usar los argumentos tienes que ejecutar los diferentes
