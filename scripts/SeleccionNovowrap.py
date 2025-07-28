@@ -1,4 +1,4 @@
-!/usr/bin/env python3
+#!/usr/bin/env python3
 
 import os
 import csv
@@ -11,10 +11,12 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/Script
 ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
 TMP_DIR    = ROOT_DIR / "temporalDocs"
-
+NOV_SEL    = TMP_DIR / "Novowrapselection"              # Directorio de selección de NOVOwrap
 
 
 NOV_DIR   = TMP_DIR / "novowrap"
+
+NOV_SEL.mkdir(parents=True, exist_ok=True)
 
 # Función que comprueba si un valor está dentro de +-tol*ref
 def is_within(val, ref, tol=0.1):
@@ -27,7 +29,7 @@ def is_within(val, ref, tol=0.1):
     return abs(val - ref) <= tol * abs(ref)
 
 # Procesa un CSV y copia el FASTA correspondiente o anota la carpeta si no hay coincidencias
-def process_csv(csv_path, output_handle, dest_dir):
+def process_csv(csv_path, output_handle, dest_dir, dest_fail):
     dirpath = Path(csv_path).parent
     found = False
 
@@ -76,7 +78,13 @@ def process_csv(csv_path, output_handle, dest_dir):
     # Si no se encontró ningún registro válido, anotamos carpeta y mensaje
     if not found:
         print(f"La carpeta '{dirpath}' no tiene ningún documento válido.")
+        os.makedirs(dest_fail, exist_ok=True)              # crea dest_fail si no existe
+        try:                                               
+            shutil.move(dirpath, dest_fail)                # «cortar y pegar» la carpeta
+        except shutil.Error as e:                          # mismo nombre ya existe, etc.
+            print(f"[WARN] No se pudo mover '{dirpath}': {e}")  
         output_handle.write(str(dirpath) + '\n')
+
 
 # Función principal: recorre root_dir y procesa cada CSV
 def main(root_dir='.', output_txt='failed_folders.txt'):
@@ -84,7 +92,8 @@ def main(root_dir='.', output_txt='failed_folders.txt'):
     print (f" root_dir: {root_dir}")
     print (f" output_txt: {output_txt}")
     dest_dir = Path('..') / 'temporalDocs' / 'Novowrapselection'
-
+    dest_fail = Path('..') / 'temporalDocs' / 'NovowrapFail'
+    
     # Archivo para anotar carpetas sin coincidencias
     with open(output_txt, 'w') as out_f:
         for dirpath, _, files in os.walk(root_dir):
