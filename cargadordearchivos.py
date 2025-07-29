@@ -127,7 +127,7 @@ def main():
         pairs = [tuple(local_files)]                               
 
     # ans es el input de esa frase
-    ans = input('¿Quieres introducir manualmente dos archivos .fasta.gz? [y/n]: ').strip().lower()
+    ans = input('¿Quieres introducir manualmente dos archivos .fastq.gz? [y/n]: ').strip().lower()
     pairs = input_pairs_manual() if ans.startswith('y') else discover_pairs_in_dir()
 
     if not pairs:
