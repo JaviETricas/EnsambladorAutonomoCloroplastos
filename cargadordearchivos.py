@@ -3,12 +3,13 @@
 import os
 import subprocess
 import sys
+import argparse, urllib.request 
 from pathlib import Path
 
 SCRIPT_DIR   = Path(__file__).resolve().parent
 AUTO_DIR     = SCRIPT_DIR / "scripts"
 PAIRS_FILE   = AUTO_DIR / "parejas.txt"
-AUTO_SCRIPT  = AUTO_DIR / "ensambladorcloroplasto.py"
+AUTO_SCRIPT  = AUTO_DIR / "pythonautomatizado.py"
 SELEC_SCRIPT = AUTO_DIR / "SeleccionNovowrap.py"
 NOVOWRAP_DIR = SCRIPT_DIR / 'temporalDocs' / 'Novowrapselection'
 BAMTSV       = AUTO_DIR   / 'BAMtsv.py'
@@ -102,7 +103,7 @@ def main():
                         help='Descarga un dataset de prueba en ./test y lo procesa')
     
     args = parser.parse_args()
-    
+
     # Si se invoca con --test, descargamos las dos lecturas en ./test
     if args.test:                                                 
         test_dir = SCRIPT_DIR / 'test'                            
@@ -171,6 +172,6 @@ def main():
         print("✓ pareja procesada con éxito.")
 
     print('\nTodas las parejas han sido procesadas.')
-    
+
 if __name__ == '__main__':
     main()
