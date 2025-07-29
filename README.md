@@ -67,11 +67,13 @@ Para comprobar que todo funciona correctamente sigue los siguientes pasos.
 
 Despues le aparecera una ventana como esta:
 
-  ¿Quieres introducir manualmente dos archivos .fastq.gz? [y/n]:
+    ```   
+    ¿Quieres introducir manualmente dos archivos .fastq.gz? [y/n]:
   
 Puede introducir manualmente la direccion de cada fastq.gz o darle a n, en ese caso vera que aparece lo siguiente:
 
-  Ruta de la carpeta con .fastq.gz:
+    ``` 
+    Ruta de la carpeta con .fastq.gz:
   
 Si le pasas la ruta a una carpeta busca manualmente los archivos fastq.gz que acaben en 1 y 2 y se llamen igual,
 de esa forma los empareja y ya no tienes que hacer nada mas asta obtener los resultados. Si no detecta todos, pasalos
