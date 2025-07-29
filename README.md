@@ -1,6 +1,11 @@
 ## EnsambladorAutonomoCloroplastos.
 [![PyPI version](https://img.shields.io/pypi/v/numpy)](https://pypi.org/project/numpy)
 
+Para una comprobacion rapida, use el argumento --test y descargara una carpeta llamada test con unos archivos 
+fastq.gz pareados que podra usar como ejemplo.
+
+El proceso total puede costar varias horas.
+
 ## Índice
 
 - [Descripción](#descripcion)
