@@ -180,12 +180,12 @@ def main(argv: List[str] | None = None) -> None:
     end = time.time()
     print(f"El tiempo transcurrido en este proceso a sido: {end-start:.1f}s\n")
 
-    ensamblador_script = Path(__file__).with_name('ensamblador.py')
+    ensamblador_script = Path(__file__).with_name('alineador.py')
     if not ensamblador_script.exists():
-        print(f"[WARN] ensamblador.py no encontrado en {ensamblador_script.parent}; omitiendo paso de ensamblaje",
+        print(f"[WARN] alineador.py no encontrado en {ensamblador_script.parent}; omitiendo paso de alineador",
               file=sys.stderr)
     else:
-        print("Lanzando ensamblador.py …")
+        print("Lanzando alineador.py …")
         try:
             subprocess.run([
                 sys.executable, str(ensamblador_script),
@@ -193,7 +193,7 @@ def main(argv: List[str] | None = None) -> None:
                 '--tsv',   str(tsv_path)
             ], check=True)
         except subprocess.CalledProcessError as exc:
-            print(f"[ERROR] ensamblador.py terminó con código {exc.returncode}", file=sys.stderr)
+            print(f"[ERROR] alineador.py terminó con código {exc.returncode}", file=sys.stderr)
             sys.exit(exc.returncode)
 
 
