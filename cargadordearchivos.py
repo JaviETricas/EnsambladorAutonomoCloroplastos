@@ -9,8 +9,8 @@ from pathlib import Path
 SCRIPT_DIR   = Path(__file__).resolve().parent
 AUTO_DIR     = SCRIPT_DIR / "scripts"
 PAIRS_FILE   = AUTO_DIR / "parejas.txt"
-AUTO_SCRIPT  = AUTO_DIR / "pythonautomatizado.py"
-SELEC_SCRIPT = AUTO_DIR / "ensambladordependencias.py"
+AUTO_SCRIPT  = AUTO_DIR / "ensambladorcloroplasto.py"
+SELEC_SCRIPT = AUTO_DIR / "SeleccionNovowrap.py"
 NOVOWRAP_DIR = SCRIPT_DIR / 'temporalDocs' / 'Novowrapselection'
 BAMTSV       = AUTO_DIR   / 'BAMtsv.py'
 TALLY        = AUTO_DIR   / 'tally.py'
@@ -151,7 +151,7 @@ def main():
                          cwd=str(SCRIPT_DIR))
 
         if ret.returncode != 0:
-            print("FALLÓ pythonautomatizado.py — se omite esta pareja.")
+            print("FALLÓ ensambladorcloroplasto.py — se omite esta pareja.")
             continue
 
             # Comprueba que NovoWrap produjo el FASTA
