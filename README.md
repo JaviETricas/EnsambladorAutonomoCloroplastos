@@ -57,6 +57,7 @@ fallidos para usar herramientas mas especificas.
 ## Inicio rapido
 
 Para comprobar que todo funciona correctamente sigue los siguientes pasos.
+
     ``` 
     # Si no tienes archivos fastq.gz para la prueba usa
     ./cargadordearchivos.py --test
