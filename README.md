@@ -11,6 +11,7 @@ El proceso total puede costar varias horas.
 - [Descripción](#descripcion)
 - [Instalación](#instalacion)
 - [Uso general](#uso-general)
+- [Inicio rapido](#inicio-rapido)
 - [Casos de uso](#casos-de-uso)
 - [Características avanzadas](#caracteristicas-avanzadas)
   - [Argumentos de scripts](#argumentos-de-scripts)
@@ -52,6 +53,26 @@ comandos de las herramientas originales estan limitados, asi que el principal ca
 un ensamblaje de cloroplastos con un gran volumen de archivos en el formato indicado. De esta manera puedes dejar
 correr el programa durante horas o dias asta tener los archivos resultantes correctos, y una lista con los archivos
 fallidos para usar herramientas mas especificas.
+
+## Inicio rapido
+
+Para comprobar que todo funciona correctamente sigue los siguientes pasos.
+    ``` 
+    # Si no tienes archivos fastq.gz para la prueba usa
+    ./cargadordearchivos.py --test
+
+    ``` 
+    # Si ya tienes su archivo usa
+    ./cargadordearchivos.py
+
+Despues le aparecera una ventana como esta:
+  ¿Quieres introducir manualmente dos archivos .fastq.gz? [y/n]:
+Puede introducir manualmente la direccion de cada fastq.gz o darle a n, en ese caso vera que aparece lo siguiente:
+  Ruta de la carpeta con .fastq.gz:
+Si le pasas la ruta a una carpeta busca manualmente los archivos fastq.gz que acaben en 1 y 2 y se llamen igual,
+de esa forma los empareja y ya no tienes que hacer nada mas asta obtener los resultados. Si no detecta todos, pasalos
+manualmente.
+  
 
 ## Caracteristicas avanzadas
 
