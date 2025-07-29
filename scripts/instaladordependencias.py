@@ -1,22 +1,13 @@
 #!/usr/bin/env python3
 """
-instaladordependencias.py – AutomatizerV01
+instaladordependencias.py – EnsambladorAutonomoCloroplastos
 -----------------------------------------
 Instala, enlaza y verifica las herramientas externas necesarias
-(tally, **Trimmomatic 0.39 (ZIP)**, samtools, novowrap y mafft).
+(minimap2, **Trimmomatic 0.39 (ZIP)**, samtools, novowrap y mafft).
 
-Principales reglas de diseño
-===========================
-1. **Rutas portables**: todo vive dentro del repositorio (`libreris/`,
-   `temporalDocs/`). No exige privilegios de administrador.
-2. **Sin credenciales GitHub**: se descarga por HTTP anónimo o conda.
-3. **Mínimos cambios**: cada revisión solo toca lo imprescindible.
-
-Cambios de esta versión
------------------------
-* **Trimmomatic** se instala desde el ZIP oficial; tras copiar su JAR se le
-  da `chmod u+x` y la verificación usa `java -jar … -version`.
-* El resto del flujo (tally, samtools, novowrap, mafft) queda intacto.
+**Rutas portables**: todo vive dentro del repositorio (`libreris/`,
+`temporalDocs/`). No exige privilegios de administrador.
+**Sin credenciales GitHub**: se descarga por HTTP anónimo o conda.
 """
 
 from __future__ import annotations
@@ -51,11 +42,13 @@ REPOS: Dict[str, str] = {
     "samtools":    "https://github.com/samtools/samtools.git",
     "novowrap":    "https://github.com/wpwupingwp/novowrap.git",
     "mafft":       f"{CONDA_PREFIX}mafft",       # Bioconda
+    "minimap2":    f"{CONDA_PREFIX}bioconda/label/cf201901::minimap2" 
 }
 
 VERIFY_CMDS: Dict[str, List[str]] = {
     "samtools":  ["samtools", "--version"],
     "novowrap":  ["novowrap", "-h"],
+    "minimap2":  ["minimap2", "--version"]
 }
 
 # Detectar si el entorno permite subprocesos (algunos notebooks web no lo hacen)
