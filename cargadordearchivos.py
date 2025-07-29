@@ -96,52 +96,83 @@ def save_pairs(pairs, filename=PAIRS_FILE):
 
 # Funcion principal que coordina la entrada procesamiento y ejecucion final
 def main():
-    # ans es el input de esa frase
-    ans = input('¿Quieres introducir manualmente dos archivos .fasta.gz? [y/n]: ').strip().lower()
-    pairs = input_pairs_manual() if ans.startswith('y') else discover_pairs_in_dir()
 
-    if not pairs:
-        print('No se encontraron parejas. Saliendo.')
-        return
+    parser = argparse.ArgumentParser(description="Pipeline Novowrap+BAMtsv")
+    parser.add_argument('--test', action='store_true',
+                        help='Descarga un dataset de prueba en ./test y lo procesa')
+    
+    args = parser.parse_args()
 
-    print(f"Total parejas encontradas: {len(pairs)}")
+    # Si se invoca con --test, descargamos las dos lecturas en ./test
+    if args.test:                                                 
+        test_dir = SCRIPT_DIR / 'test'                            
+        test_dir.mkdir(exist_ok=True)                             
 
-    save_pairs(pairs)    
+        urls = [                                                  
+            'ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR127/030/ERR12745630/ERR12745630_1.fastq.gz',
+            'ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR127/030/ERR12745630/ERR12745630_2.fastq.gz'
+        ]                                                         
 
-    subprocess.run([sys.executable, str(INTALL_DIR)], check=True)
-    subprocess.run([sys.executable, str(TALLY)], check=True)
+        local_files = []                                          
+        for url in urls:                                          
+            dest = test_dir / Path(url).name                      
+            if not dest.is_file():                                
+                print(f"Descargando {dest.name}…")                
+                urllib.request.urlretrieve(url, dest)             
+            else:                                                
+                print(f"{dest.name} ya existe, se omite la descarga.")  
+            local_files.append(str(dest))                         
 
-    for idx, (f1, f2) in enumerate(pairs, start=1):
-        print(f"\nProcesando pareja {idx}/{len(pairs)}")
+        pairs = [tuple(local_files)]                             
+    else:  
 
-        #   Lanza  NovoWrap
-        ret = subprocess.run(['python3', str(AUTO_SCRIPT),
-                          '--fq1', f1, '--fq2', f2],
-                         cwd=str(SCRIPT_DIR))
+        # ans es el input de esa frase
+        ans = input('¿Quieres introducir manualmente dos archivos .fasta.gz? [y/n]: ').strip().lower()
+        pairs = input_pairs_manual() if ans.startswith('y') else discover_pairs_in_dir()
 
-        if ret.returncode != 0:
-            print("FALLÓ pythonautomatizado.py — se omite esta pareja.")
-            continue
+        if not pairs:
+            print('No se encontraron parejas. Saliendo.')
+            return
 
-        # Comprueba que NovoWrap produjo el FASTA
-        base = Path(f1).name.replace('_1.fastq.gz', '')
-        fasta_found = list(NOVOWRAP_DIR.glob(f'*{base}*.fasta'))
-        if not fasta_found:
-            print(f"FASTA de {base} no encontrado tras NOVOWRAP — salto pareja.")
-            continue
+        print(f"Total parejas encontradas: {len(pairs)}")
 
-        # Ejecuta BAMtsv
-        subprocess.run(
-            ['python3', str(BAMTSV),
-             '--fq1', f1, '--fq2', f2,
-             '--ref', str(NOVOWRAP_DIR)],
-            cwd=str(SCRIPT_DIR),
-            check=True
-        )
-        print("✓ pareja procesada con éxito.")
+        #save_pairs(pairs)    
 
-    print('\nTodas las parejas han sido procesadas.')
+        subprocess.run([sys.executable, str(INTALL_DIR)], check=True)
+        subprocess.run([sys.executable, str(TALLY)], check=True)
 
+        for idx, (f1, f2) in enumerate(pairs, start=1):
+            print(f"\nProcesando pareja {idx}/{len(pairs)}")
+
+            write_pair_file((f1, f2))   
+
+            #   Lanza  NovoWrap
+            ret = subprocess.run(['python3', str(AUTO_SCRIPT),
+                              '--fq1', f1, '--fq2', f2],
+                             cwd=str(SCRIPT_DIR))
+
+            if ret.returncode != 0:
+                print("FALLÓ pythonautomatizado.py — se omite esta pareja.")
+                continue
+
+            # Comprueba que NovoWrap produjo el FASTA
+            base = Path(f1).name.replace('_1.fastq.gz', '')
+            fasta_found = list(NOVOWRAP_DIR.glob(f'*{base}*.fasta'))
+            if not fasta_found:
+                print(f"FASTA de {base} no encontrado tras NOVOWRAP — salto pareja.")
+                continue
+
+            # Ejecuta BAMtsv
+            subprocess.run(
+                ['python3', str(BAMTSV),
+                 '--fq1', f1, '--fq2', f2,
+                 '--ref', str(NOVOWRAP_DIR)],
+                cwd=str(SCRIPT_DIR),
+                check=True
+            )
+            print("✓ pareja procesada con éxito.")
+
+        print('\nTodas las parejas han sido procesadas.')
 
 if __name__ == '__main__':
     main()
