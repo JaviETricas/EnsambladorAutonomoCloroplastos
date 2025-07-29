@@ -73,7 +73,7 @@ def process_csv(csv_path, output_handle, dest_dir, dest_fail):
                 shutil.copy2(fasta_file, dest_path)
                 print(f"[COPY] Copiado {fasta_file} → {dest_path}")
                 found = True
-            break
+                break
 
     # Si no se encontró ningún registro válido, anotamos carpeta y mensaje
     if not found:
@@ -93,7 +93,8 @@ def main(root_dir='.', output_txt='failed_folders.txt'):
     print (f" output_txt: {output_txt}")
     dest_dir = Path('..') / 'temporalDocs' / 'Novowrapselection'
     dest_fail = Path('..') / 'temporalDocs' / 'NovowrapFail'
-    
+    dest_fail.mkdir(parents=True, exist_ok=True)
+        
     # Archivo para anotar carpetas sin coincidencias
     with open(output_txt, 'w') as out_f:
         for dirpath, _, files in os.walk(root_dir):
