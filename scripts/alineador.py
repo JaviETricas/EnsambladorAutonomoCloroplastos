@@ -252,10 +252,10 @@ def main():
     os.replace(aln_temp, final_aln)
     print(f"Resultado final: {final_aln}")
 
-    if shutil.which("seaview"):
-        subprocess.run(["seaview", final_aln])
-    else:
-        print("Seaview no encontrado; abre el fichero manualmente si lo deseas")
+#    if shutil.which("seaview"):
+ #       subprocess.run(["seaview", final_aln])
+  #  else:
+   #     print("Seaview no encontrado; abre el fichero manualmente si lo deseas")
 
 if __name__ == "__main__":
     main()
