@@ -251,7 +251,7 @@ def main() -> None:
     if errores:
         print("Errores/faltantes:", ", ".join(errores))
     if not errores:
-        print("Todo instalado y verificado correctamente. ¡Listo!")
+        print("Todo instalado y verificado correctamente. ¡Listo! \n")
 
 
 if __name__ == "__main__":
