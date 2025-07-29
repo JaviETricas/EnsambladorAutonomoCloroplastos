@@ -8,7 +8,7 @@ from pathlib import Path
 SCRIPT_DIR   = Path(__file__).resolve().parent
 AUTO_DIR     = SCRIPT_DIR / "scripts"
 PAIRS_FILE   = AUTO_DIR / "parejas.txt"
-AUTO_SCRIPT  = AUTO_DIR / "pythonautomatizado.py"
+AUTO_SCRIPT  = AUTO_DIR / "ensambladorcloroplasto.py"
 SELEC_SCRIPT = AUTO_DIR / "SeleccionNovowrap.py"
 NOVOWRAP_DIR = SCRIPT_DIR / 'temporalDocs' / 'Novowrapselection'
 BAMTSV       = AUTO_DIR   / 'BAMtsv.py'
