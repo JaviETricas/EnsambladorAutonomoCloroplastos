@@ -11,7 +11,7 @@ from typing import List
 # Definimos rutas relativas para que sea portable.
 ROOT_DIR = Path(__file__).resolve().parents[1]
 MINIMAP2_BIN = ROOT_DIR / 'libreris' / 'minimap2'  
-SAMTOOLS_BIN = ROOT_DIR / 'libreris' / 'samtools-1.22' / 'samtools'
+SAMTOOLS_BIN = ROOT_DIR / 'libreris' / 'samtools'
 
 # Función que localiza el FASTA correcto dado un directorio o un archivo.
 def localizar_fasta(ref_path: Path, fq1: Path) -> Path:
