@@ -152,6 +152,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
     print(f"[SELECT] Ejecutando selección de FASTAs: {' '.join(cmd_select)}")
     result = subprocess.run(
         cmd_select,
+        cwd=str(Path(__file__).parent),  
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
