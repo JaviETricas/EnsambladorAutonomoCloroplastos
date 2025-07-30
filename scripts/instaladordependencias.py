@@ -1,18 +1,7 @@
 #!/usr/bin/env python3
-"""
-instaladordependencias.py – EnsambladorAutonomoCloroplastos
------------------------------------------
-Instala, enlaza y verifica las herramientas externas necesarias
-(minimap2, **Trimmomatic 0.39 (ZIP)**, samtools, novowrap y mafft).
-
-**Rutas portables**: todo vive dentro del repositorio (`libreris/`,
-`temporalDocs/`). No exige privilegios de administrador.
-**Sin credenciales GitHub**: se descarga por HTTP anónimo o conda.
-"""
 
 from __future__ import annotations
 
-# ====================== 1. IMPORTAR LIBRERÍAS =========================
 import argparse
 import os
 import shutil
@@ -23,9 +12,9 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 # RUTAS RELATIVAS PORTABLES 
-SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/scripts
-ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
-LIB_DIR    = ROOT_DIR / "libreris"                    # Binarios + wrappers
+SCRIPT_DIR = Path(__file__).resolve().parent            
+ROOT_DIR   = SCRIPT_DIR.parent                          
+LIB_DIR    = ROOT_DIR / "libreris"                # Binarios + wrappers
 TMP_DIR    = ROOT_DIR / "libreris"                # Descargas / builds
 
 # Rutas específicas (las necesitan los demás programas)
@@ -33,16 +22,15 @@ TRIMMOMATIC_DIR     = LIB_DIR / "Trimmomatic-0.39"
 TRIMMOMATIC_JAR     = TRIMMOMATIC_DIR / "trimmomatic-0.39.jar"
 TRIMMOMATIC_WRAPPER = LIB_DIR / "trimmomatic"          # lanzador shell
 
-# ====================== 3. CONSTANTES Y CONFIGURACIÓN ================
 CONDA_PREFIX = "conda://"   # Marca repos conda
 BUILD_PREFIX = "build://"   # Marca instalaciones personalizadas
 
 REPOS: Dict[str, str] = {
-    "Trimmomatic": f"{BUILD_PREFIX}trimmomatic", # ZIP oficial
-    "samtools":    "https://github.com/samtools/samtools.git",
-    "novowrap":    "https://github.com/wpwupingwp/novowrap.git",
-    "mafft":       f"{CONDA_PREFIX}mafft",       # Bioconda
-    "minimap2":    f"{CONDA_PREFIX}bioconda/label/cf201901::minimap2" 
+    "Trimmomatic": f"{BUILD_PREFIX}trimmomatic",                             
+    "samtools":    f"{CONDA_PREFIX}bioconda::samtools",               
+    "novowrap":    f"{CONDA_PREFIX}wpwupingwp::novowrap",                  
+    "mafft":       f"{CONDA_PREFIX}bioconda::mafft",                        
+    "minimap2":    f"{CONDA_PREFIX}bioconda::minimap2"                      
 }
 
 VERIFY_CMDS: Dict[str, List[str]] = {
@@ -54,10 +42,9 @@ VERIFY_CMDS: Dict[str, List[str]] = {
 # Detectar si el entorno permite subprocesos (algunos notebooks web no lo hacen)
 PROC_SUPPORTED: bool = sys.platform != "emscripten"
 
-
 # FUNCIONES AUXILIARES
 def run_cmd(cmd: List[str], cwd: Path | None = None, *, accept_nonzero: bool = False) -> Tuple[bool, str]:
-    """Ejecuta *cmd* y devuelve (ok, salida)."""
+
     if not PROC_SUPPORTED:
         return False, "Subprocesos no soportados."
     try:
@@ -68,19 +55,24 @@ def run_cmd(cmd: List[str], cwd: Path | None = None, *, accept_nonzero: bool = F
     except (FileNotFoundError, OSError) as e:
         return False, str(e)
 
-# Instalar paquetes conda genéricos (p.ej. mafft)
-def conda_install(pkg: str, *, force: bool = False) -> bool:
-    if not PROC_SUPPORTED:
-        print(f"[WARN] Entorno sin subprocesos: no se puede instalar {pkg}.")
-        return False
-    if shutil.which(pkg.split("::")[-1]) and not force:
-        return True
-    print(f"[COND] Instalando {pkg} desde bioconda …")
-    ok, out = run_cmd(["conda", "install", "-y", "-c", "bioconda", pkg])
-    if not ok:
-        print(f"[ERROR] conda no pudo instalar {pkg}:", out)
-    return ok
+# Instalar paquetes conda genéricos (p.ej. mafft, minimap2, novowrap)
+def conda_install(pkg: str, *, force: bool = False) -> bool:                   
+    if not PROC_SUPPORTED:                                                    
+        print(f"[WARN] Entorno sin subprocesos: no se puede instalar {pkg}.")  
+        return False                                                           
+    if shutil.which(pkg.split("::")[-1]) and not force:                        
+        return True                                                            
 
+    print(f"[COND] Instalando {pkg} …")                                      
+
+    cmd = ["conda", "install", "-y"]                                     
+    if "::" not in pkg:                                              
+        cmd.extend(["-c", "bioconda"])                                      
+    ok, out = run_cmd(cmd + [pkg])                                        
+
+    if not ok:                                                           
+        print(f"[ERROR] conda no pudo instalar {pkg}:", out)                   
+    return ok                                                                  
 
 # Instalar Trimmomatic 0.39 desde ZIP oficial
 TRIMMOMATIC_ZIP_URL = "http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip"
@@ -158,8 +150,13 @@ def git_clone(name: str, url: str, *, force: bool = False) -> Path | None:
 # Crear enlaces simbólicos en libreris para asegurar que los programas funcionan correctamente
 def symlink_if_exists(binary: Path) -> bool:
     if not binary.exists():
-        print(f"[WARN] No se encontró binario para {binary.name}; enlace omitido.")
-        return False
+        # intenta localizar binario dentro de conda/pip env
+        alt = shutil.which(binary.name)
+        if alt:
+            binary = Path(alt)
+        else:
+            print(f"[WARN] No se encontró binario para {binary.name}; enlace omitido.")
+            return False
     target = LIB_DIR / binary.name
     if target.exists() or target.is_symlink():
         target.unlink()
@@ -199,6 +196,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Instala y verifica dependencias externas.")
     parser.add_argument("--force", action="store_true", help="Forzar reinstalación completa")
     args = parser.parse_args()
+
+    if str(LIB_DIR) not in os.environ.get("PATH", ""):                       
+        os.environ["PATH"] = f"{LIB_DIR}{os.pathsep}" + os.environ["PATH"]
 
     installed_now: List[str] = []
     verified_ok: List[str] = []
