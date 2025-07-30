@@ -28,7 +28,7 @@ def conda_env_exists(env):
     result = subprocess.run(["conda", "env", "list", "--json"], check=True, capture_output=True, text=True)
     import json
     envs = json.loads(result.stdout)["envs"]
-    return any(env.endswith("/" + env_name) or env == env_name for env_name in envs)
+    return any(os.path.basename(p) == env for p in envs) 
 
 # funcion para instalar un paquete en un entorno conda
 def conda_install(env, package):
@@ -79,7 +79,4 @@ if os.path.exists(TARGET_BIN):
     os.remove(TARGET_BIN)           # Evita bucles de symlinks
 shutil.copy2(tally_path, TARGET_BIN)
 os.chmod(TARGET_BIN, 0o755)
-print(f"[INFO] Copiado tally a {TARGET_BIN}")
-
-
-
+print(f"[INFO] Copiado tally a {TARGET_BIN} \n")
