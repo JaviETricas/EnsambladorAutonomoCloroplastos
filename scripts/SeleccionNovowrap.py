@@ -12,9 +12,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/Script
 ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
 TMP_DIR    = ROOT_DIR / "temporalDocs"
 NOV_SEL    = TMP_DIR / "Novowrapselection"              # Directorio de selección de NOVOwrap
-
-
-NOV_DIR   = TMP_DIR / "novowrap"
+TRIM_DIR   = TMP_DIR / "trimmomatic"
+NOV_DIR    = TMP_DIR / "novowrap"
 
 NOV_SEL.mkdir(parents=True, exist_ok=True)
 
@@ -88,6 +87,13 @@ def process_csv(csv_path, output_handle, dest_dir, dest_fail):
 
 # Función principal: recorre root_dir y procesa cada CSV
 def main(root_dir='.', output_txt='failed_folders.txt'):
+
+    # Usa los directorios globales ya definidos arriba
+    dest_dir  = NOV_SEL                     # …/temporalDocs/Novowrapselection
+    dest_fail = TMP_DIR / "NovowrapFail"    # …/temporalDocs/NovowrapFail
+    dest_dir.mkdir(parents=True,  exist_ok=True)
+    dest_fail.mkdir(parents=True, exist_ok=True)
+
     # Directorio donde copiar FASTAs seleccionados
     print (f" root_dir: {root_dir}")
     print (f" output_txt: {output_txt}")
@@ -102,11 +108,15 @@ def main(root_dir='.', output_txt='failed_folders.txt'):
                 if fname.lower().endswith('.csv'):
                     process_csv(os.path.join(dirpath, fname), out_f, dest_dir, dest_fail)
 
-    print(f"Procesamiento de selección completado. Carpetas sin coincidencias en: {output_txt}")
+    print(f"Procesamiento de selección completado. Carpetas sin coincidencias en: {output_txt} \n")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Select FASTA based on CSV criteria')
     parser.add_argument('-r', '--root', default= NOV_DIR, help='Directorio raíz de búsqueda')
     parser.add_argument('-o', '--output', default= SCRIPT_DIR / 'Errores_de_novowrap.txt', help='TXT de carpetas sin coincidencias')
+    parser.add_argument('--fail', default=NOV_DIR, help='Directorio para mover resultados herroneos')
     args = parser.parse_args()
     main(root_dir=args.root, output_txt=args.output)
+
+
+
