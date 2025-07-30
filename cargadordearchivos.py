@@ -135,11 +135,10 @@ def main():
         return
 
     print(f"Total parejas encontradas: {len(pairs)}")
-
-        #save_pairs(pairs)    
-
-    subprocess.run([sys.executable, str(INTALL_DIR)], check=True)
+        
     subprocess.run([sys.executable, str(TALLY)], check=True)
+    subprocess.run([sys.executable, str(INTALL_DIR)], check=True)
+
 
     for idx, (f1, f2) in enumerate(pairs, start=1):
         print(f"\nProcesando pareja {idx}/{len(pairs)}")
