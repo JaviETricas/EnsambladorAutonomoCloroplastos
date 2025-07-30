@@ -28,10 +28,9 @@ BLAST_DB             = ROOT_DIR / "cloroplasto_referencia" / "mi_bd"
 # Directorios de salida
 TALLY_DIR = TMP_DIR / "tally"
 TRIM_DIR  = TMP_DIR / "trimmomatic"
-SEQ_DIR   = TMP_DIR / "seq_crumbs"  # Reservado por si se activa seqcrumbs
 NOV_DIR   = TMP_DIR / "novowrap"
 
-for d in (TALLY_DIR, TRIM_DIR, SEQ_DIR, NOV_DIR):
+for d in (TALLY_DIR, TRIM_DIR, NOV_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
 # Comprobamos las dependencias minimas
@@ -66,7 +65,7 @@ trim_unpaired   : list[Path] = []
 novowrap_results: list[Path] = []
 
 for idx, (f1, f2) in enumerate(pairs, start=1):
-    print(f"\n=== PAREJA {idx}/{len(pairs)} =========================")
+    print(f"\n=== PAREJA {idx}/{len(pairs)} ========================= \n")
     start_time = time.time()
     # ── 1. TALLY ─────────────────────────────────────────────
     base = Path(f1).stem[:-2]      # recorta el "_1"
@@ -80,9 +79,10 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
         '--with-quality', '--no-tally', '--pair-by-offset'
     ], check=False)
     if not (out1.exists() and out2.exists()):
-        print("  ⨯ Error en Tally. Se omite esta pareja.")
+        print("  ⨯ Error en Tally. Se omite esta pareja. \n")
         continue
     tally_results.extend([out1, out2])
+    print(f"  ✓ Tally completado en {time.time() - start_time:.1f}s\n")
 
     # ── 2. TRIMMOMATIC ──────────────────────────────────────
     pep1 = TRIM_DIR / f"{base}_pareado_1.fastq.gz"
@@ -103,6 +103,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
         continue
     trim_paired.extend([pep1, pep2])
     trim_unpaired.extend([upe1, upe2])
+    print(f"  ✓ Trimmomatic completado en {time.time() - start_time:.1f}s\n")
 
     # ── 3. NOVOWRAP ─────────────────────────────────────────
     out_dir = NOV_DIR / f"{base}_Novowrap"
@@ -129,7 +130,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
     else:
         print("  ⨯ No se encontraron FASTA; se omite esta pareja.")
         continue
-    print(f"\nPipeline completado en {time.time()-start_time:.1f}s")
+    print(f"\nPipeline completado en {time.time()-start_time:.1f}s\n")
 
     # ── 4. LIMPIEZA PARCIAL ─────────────────────────────────
     for tmp in (out1, out2, upe1, upe2):
@@ -194,17 +195,6 @@ else:
 
 print("Pipeline completado.")
 print_summary()
-
-
-
-
-
-
-
-
-
-
-
 
 
 
