@@ -166,25 +166,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
         except Exception as e:
             print(f" No se pudo borrar {tmp}: {e}")
         
-#Fase 7. Resumen final.
-def print_summary():
-	print("\nResumen de resultados:")
-	print(f" Tally ({len(tally_results)}):")
-	for path in tally_results:
-		print(f" {path}")
-	print(f" Pareados Trimmomatic ({len(trim_paired)}):")
-	for path in trim_paired:
-		print(f" {path}")
-	print(f" Unpareados Trimmomatic ({len(trim_unpaired)}):")
-	for path in trim_unpaired:
-		print(f" {path}")
-	print(f" Novowrap({len(novowrap_results)}):")
-	for path in novowrap_results:
-		print(f" {path}")
 	
-print_summary()   
-
-
 
 # Comprobamos éxito o fallo
 if result.returncode != 0:
@@ -195,7 +177,7 @@ else:
     print(f"[SELECT] Selección completada. FASTAs listados en: {output_list}")
 
 print("Pipeline completado.")
-print_summary()
+
 
 
 
