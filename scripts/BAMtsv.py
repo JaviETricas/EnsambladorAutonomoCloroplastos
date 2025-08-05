@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-
-import argparse                 
-import subprocess 
-import time              
-import sys                      
-import re                       
-from pathlib import Path        
 from typing import List      
 
 # Definimos rutas relativas para que sea portable.
@@ -15,7 +7,6 @@ SAMTOOLS_BIN = ROOT_DIR / 'libreris' / 'samtools'
 
 # Función que localiza el FASTA correcto dado un directorio o un archivo.
 def localizar_fasta(ref_path: Path, fq1: Path) -> Path:
-
     if ref_path.is_file():
         return ref_path.resolve()
 
@@ -24,6 +15,12 @@ def localizar_fasta(ref_path: Path, fq1: Path) -> Path:
 
     candidatos = [p for p in ref_path.iterdir() if p.is_file() and base in p.name]
 
+    if len(candidatos) > 1:                                
+        candidatos = sorted(candidatos,                      
+                            key=lambda p: p.stat().st_mtime,  
+                            reverse=True)                    
+        print(f"[INFO] Varios FASTA coinciden; uso el más reciente →"     
+              f" {candidatos[0].name}", file=sys.stderr)
 
     if not candidatos:
         raise FileNotFoundError(
@@ -38,6 +35,7 @@ def localizar_fasta(ref_path: Path, fq1: Path) -> Path:
     fasta_path = candidatos[0].resolve()
     print(f"[DEBUG] FASTA elegido --> {fasta_path}", file=sys.stderr)
     return fasta_path
+
 
 def alinear_y_sort(fasta: Path, fq1: Path, fq2: Path, bam_out: Path) -> None:
     """Alinea lecturas con minimap2 y genera BAM ordenado + BAI."""
@@ -54,6 +52,7 @@ def alinear_y_sort(fasta: Path, fq1: Path, fq2: Path, bam_out: Path) -> None:
     p1.stdout.close()
     p2.communicate()
     subprocess.check_call([str(SAMTOOLS_BIN), 'index', str(bam_out)])
+
 
 # Función auxiliar que cuenta símbolos de la columna 5 de mpileup
 def parse_pileup_line(line: str) -> tuple[str, str, dict[str, int]]:
@@ -100,15 +99,12 @@ def parse_pileup_line(line: str) -> tuple[str, str, dict[str, int]]:
                 counts['other'] += 1
             i += 1
 
-
     return chrom, pos, counts
 
 
 # Función que ejecuta mpileup y escribe un TSV con todos los conteos. 
 def generar_tsv(bam: Path, fasta: Path, tsv_out: Path) -> None:
-
     print(f"[DEBUG] Generando TSV de pileup para {bam} usando {fasta}")
-
 
     mpileup = subprocess.Popen(
     [
