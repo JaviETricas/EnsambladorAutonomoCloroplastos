@@ -15,6 +15,7 @@ LIB_DIR    = ROOT_DIR / "libreris"
 TMP_DIR    = ROOT_DIR / "temporalDocs"
 RES_DIR    = ROOT_DIR / "resultados"
 PAIRS_FILE = SCRIPT_DIR / "parejas.txt"
+NOV_SEL    = ROOT_DIR / "temporalDocs" / "Novowrapselection"
 
 # Ejecutables y recursos
 TALLY_EXE            = LIB_DIR / "./tally"
@@ -109,7 +110,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
     out_dir = NOV_DIR / f"{base}_Novowrap"
     print(f"[NOVOwrap] {base}")
     cmd_novo = [
-        str(NOVOWRAP_EXE),
+        "python", "-m", "novowrap",
         '-input', pep1, pep2,
         '-ref', str(CLORO_REF_GB),
         '-out',  out_dir,
@@ -145,14 +146,14 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
     cmd_select = [
         "python3",
         str(selection_script),
-        "-r", str(out_dir),          #si usas NOV_DIR accede a la raíz de búsqueda: carpeta con todos los *_Novowrap
+        "-r", str(NOV_DIR),          #si usas NOV_DIR accede a la raíz de búsqueda: carpeta con todos los *_Novowrap
         "-o", str(output_list)       # fichero de salida
     ]
 
     print(f"[SELECT] Ejecutando selección de FASTAs: {' '.join(cmd_select)}")
     result = subprocess.run(
         cmd_select,
-        cwd=str(Path(__file__).parent),  
+        cwd=str(Path(__file__).parent),  # directorio del script
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
@@ -166,8 +167,6 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
         except Exception as e:
             print(f" No se pudo borrar {tmp}: {e}")
         
-	
-
 # Comprobamos éxito o fallo
 if result.returncode != 0:
     print(f"[SELECT] ERROR (returncode={result.returncode})")
@@ -177,15 +176,3 @@ else:
     print(f"[SELECT] Selección completada. FASTAs listados en: {output_list}")
 
 print("Pipeline completado.")
-
-
-
-
-
-
-
-
-
-
-
-
