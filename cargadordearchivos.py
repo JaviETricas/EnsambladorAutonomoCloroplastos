@@ -135,6 +135,8 @@ def main():
         return
 
     print(f"Total parejas encontradas: {len(pairs)}")
+
+        #save_pairs(pairs)    
         
     subprocess.run([sys.executable, str(TALLY)], check=True)
     subprocess.run([sys.executable, str(INTALL_DIR)], check=True)
@@ -174,4 +176,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
