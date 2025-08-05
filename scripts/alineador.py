@@ -212,12 +212,13 @@ def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
     root_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
     temp = os.path.join(root_dir, "temporalDocs")
+    ref = os.path.join(root_dir, "cloroplasto_referencia")
     dirs = {
         'selection': os.path.join(temp, "Novowrapselection"),
         'tsv':        os.path.join(temp, "bam"),
         'oneline':    os.path.join(temp, "Oneline"),
         'fused_in':   os.path.join(temp, "Fusionados_Cloroplastos"),
-        'fused_out':  os.path.join(temp, "Cloroplastos_Fusionados"),
+        'fused_out':  os.path.join(ref ),
         'alignment':  os.path.join(temp, "Alineacion"),
         'results':    os.path.join(root_dir, "Resultados"),
     }
@@ -259,4 +260,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
