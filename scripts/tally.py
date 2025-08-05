@@ -53,9 +53,7 @@ def which_in_env(env, binary):
         raise RuntimeError(f"No se encontró {binary} en el entorno {env}")
     return path
 
-# ---------------------------------------------------------------------------
 # 1. Crear o actualizar el entorno con reaper
-# ---------------------------------------------------------------------------
 print(f"[INFO] Verificando entorno '{CONDA_ENV}' …")
 if conda_env_exists(CONDA_ENV):
     print(f"[INFO] Entorno '{CONDA_ENV}' ya existe - instalando/actualizando {PACKAGE}")
@@ -64,19 +62,18 @@ else:
     print(f"[INFO] Entorno '{CONDA_ENV}' no existe - creándolo con {PACKAGE}")
     conda_create(CONDA_ENV, PACKAGE)
 
-# ---------------------------------------------------------------------------
 # 2. Localizar tally dentro del entorno
-# ---------------------------------------------------------------------------
 print("[INFO] Localizando 'tally' en el entorno …")
 tally_path = which_in_env(CONDA_ENV, "tally")
 print(f"[INFO] tally encontrado en: {tally_path}")
 
-# ---------------------------------------------------------------------------
 # 3. Copiar a ../libreris/tally
-# ---------------------------------------------------------------------------
 os.makedirs(TARGET_DIR, exist_ok=True)
 if os.path.exists(TARGET_BIN):
     os.remove(TARGET_BIN)           # Evita bucles de symlinks
 shutil.copy2(tally_path, TARGET_BIN)
 os.chmod(TARGET_BIN, 0o755)
-print(f"[INFO] Copiado tally a {TARGET_BIN} \n")
+print(f"[INFO] Copiado tally a {TARGET_BIN}")
+
+
+
