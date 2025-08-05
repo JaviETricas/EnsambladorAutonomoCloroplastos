@@ -18,12 +18,10 @@ CONDA_PREFIX = "conda://"
 BUILD_PREFIX = "build://"
 
 REPOS: Dict[str, str] = {
-    # build (custom)
     "Trimmomatic": f"{BUILD_PREFIX}trimmomatic",
     "novowrap":    f"{BUILD_PREFIX}novowrap",       # pip + Py3.8
     "minimap2":    f"{BUILD_PREFIX}minimap2",       # git + make
-    # conda
-    "samtools":    f"{CONDA_PREFIX}bioconda::samtools",
+    "samtools":    f"{BUILD_PREFIX}samtools",       # **cambia: env dedicado**
     "mafft":       f"{CONDA_PREFIX}bioconda::mafft",
 }
 
@@ -32,7 +30,6 @@ VERIFY_CMDS: Dict[str, List[str]] = {
     "samtools": ["samtools", "--version"],
     "mafft":    ["mafft", "--help"],
     "minimap2":    ["minimap2", "--version"]
-    # novowrap se inyecta dinámicamente más abajo con la ruta correcta
 }
 
 PROC_SUPPORTED = sys.platform != "emscripten"
@@ -84,12 +81,17 @@ def install_trimmomatic_zip(force: bool = False) -> bool:
         print("[WARN] Sin subprocesos: Trimmomatic omitido.")
         return False
 
-    TMP_DIR.mkdir(parents=True, exist_ok=True)
-    zip_path = TMP_DIR / "Trimmomatic-0.39.zip"
-    print("[DL] Descargando Trimmomatic-0.39.zip …")
-    ok, out = run_cmd(["curl", "-L", "-o", str(zip_path), TRIM_ZIP_URL])
-    if not ok:
-        print("[ERROR] Descarga fallida:", out); return False
+    # --- descargar ZIP (sin curl) ---
+    try:
+        import urllib.request
+        TMP_DIR.mkdir(parents=True, exist_ok=True)
+        zip_path = TMP_DIR / "Trimmomatic-0.39.zip"
+        print("[DL] Descargando Trimmomatic-0.39.zip …")
+        urllib.request.urlretrieve(TRIM_ZIP_URL, zip_path)
+    except Exception as e:
+        print("[ERROR] Descarga fallida:", e)
+        return False
+
 
     extract_dir = TMP_DIR / "trim_extract"
     shutil.rmtree(extract_dir, ignore_errors=True)
@@ -210,13 +212,63 @@ def conda_install(pkg: str, *, force: bool = False) -> bool:
         canal, nombre = pkg.split("::", 1)
         cmd.extend(["-c", canal, pkg])
     else:
-        cmd.extend(["-c", "bioconda", pkg])
+        canal, nombre = "bioconda", pkg
+        cmd.extend(["-c", canal])
+
+    # --- Fuerza python=3.11 cuando se trate de samtools ---------------
+    if nombre.startswith("samtools") and "python=3.11" not in cmd:
+        cmd.append("python=3.11")
+
+    cmd.append(pkg) 
 
     print(f"[COND] Instalando {pkg} …")
     ok, out = run_cmd(cmd)
     if not ok:
         print("[ERROR] conda install:", out)
     return ok
+
+
+def install_samtools_env(force: bool = False) -> bool:
+
+    env_name = "samtools_env"
+    conda_prefix = Path(os.environ.get("CONDA_PREFIX", Path.home() / "miniconda3"))
+    env_dir = conda_prefix / "envs" / env_name
+    samtools_exe = env_dir / "bin" / "samtools"
+
+    if samtools_exe.exists() and not force:
+        symlink_if_exists("samtools")
+        return True
+
+    if force and env_dir.exists():
+        print(f"[INFO] Eliminando entorno antiguo '{env_name}' …")
+        shutil.rmtree(env_dir)
+
+    if not env_dir.exists():
+        print(f"[INFO] Creando entorno '{env_name}' con python=3.11 …")
+        ok, out = run_cmd([
+            "conda", "create", "-y", "-n", env_name,
+            "python=3.11", "-c", "conda-forge"
+        ])
+        if not ok:
+            print("[ERROR] No se pudo crear el entorno:", out)
+            return False
+
+    print(f"[COND] Instalando samtools en '{env_name}' …")
+    ok, out = run_cmd([
+        "conda", "install", "-y", "-n", env_name,
+        "-c", "bioconda", "samtools"
+    ])
+    if not ok:
+        print("[ERROR] conda install samtools:", out)
+        return False
+    if not samtools_exe.exists():
+        print("[ERROR] samtools no apareció en el entorno.")
+        return False
+
+    symlink_if_exists("samtools")
+    print("[OK] samtools instalado y enlazado.")
+    return True
+
 
 # 4.6  Enlaces simbólicos
 def _conda_env_bins() -> List[Path]:
@@ -294,6 +346,7 @@ def verify(name: str) -> Tuple[bool, str]:
         return False, "Sin comando verificación."
     return run_cmd(cmd, accept_nonzero=True)
 
+
 # 5. FLUJO PRINCIPAL
 def main() -> None:
     parser = argparse.ArgumentParser(description="Instala/verifica dependencias.")
@@ -301,7 +354,6 @@ def main() -> None:
                         help="Forzar reinstalación completa")
     args = parser.parse_args()
 
-    # Asegurar libreris/ en PATH
     if str(LIB_DIR) not in os.environ.get("PATH", ""):
         os.environ["PATH"] = f"{LIB_DIR}{os.pathsep}" + os.environ["PATH"]
 
@@ -312,7 +364,7 @@ def main() -> None:
         print(f"\n→ {name} …")
         ok = False
 
-        # ----- build -----
+        # ----- build ---------------------------------------------------------
         if locator.startswith(BUILD_PREFIX):
             if name == "Trimmomatic":
                 ok = install_trimmomatic_zip(force=args.force)
@@ -320,8 +372,10 @@ def main() -> None:
                 ok = install_novowrap_pip(force=args.force)
             elif name == "minimap2":
                 ok = install_minimap2_source(force=args.force)
+            elif name == "samtools":                        # ← NUEVO
+                ok = install_samtools_env(force=args.force)   # ← NUEVO
 
-        # ----- conda -----
+        # ----- conda ---------------------------------------------------------
         elif locator.startswith(CONDA_PREFIX):
             ok = conda_install(locator[len(CONDA_PREFIX):], force=args.force)
 
@@ -330,7 +384,7 @@ def main() -> None:
         else:
             errores.append(name); continue
 
-        # symlink
+        # symlink -------------------------------------------------------------
         if name == "Trimmomatic":
             symlink_if_exists("trimmomatic")
         elif name == "novowrap":
@@ -360,10 +414,11 @@ def main() -> None:
     if not errores:
         print("Todo correcto. ✅")
 
-# 6. ENTRYPOINT
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         print("\nInterrumpido por el usuario.")
+
+
 
