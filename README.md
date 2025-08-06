@@ -9,6 +9,7 @@ El proceso total puede costar varias horas.
 ## Índice
 
 - [Descripción](#descripcion)
+- [Requisitos](#requisitos)
 - [Instalación](#instalacion)
 - [Uso general](#uso-general)
 - [Inicio rapido](#inicio-rapido)
@@ -31,6 +32,15 @@ generar error, y corrige los fallos de estos.
 
 Por ultimo antes de alinear cambia el nombre al nombre de la especie + nombre del archivo + numero de bases del
 coting.
+
+## Requisitos
+
+Para que el programa funcione correctamente en la actualidad se necesita:
+
+ - Sistema operativo linux.
+ - Conda instalado
+ - Bioconda
+ - Comandos de Github
 
 ## Instalacion
 
