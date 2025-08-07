@@ -236,9 +236,19 @@ def main():
         if not pairs:
             sys.exit("No se encontraron parejas FASTA↔TSV válidas")
 
+    # ── comprobar qué fusión existe ya ───────────────────────────────
+    patron = os.path.join(dirs['fused_out'], "Fusion_Cloroplastos_*.fasta")
+    existentes = glob.glob(patron)
+    nums = [int(m.group(1))                                      # números ya usados
+            for f in existentes
+            for m in [re.search(r"Fusion_Cloroplastos_(\d+)\.fasta$", f)]
+            if m]
+    last = max(nums) if nums else 1                              # 1 si no hay ninguna
+
     fusion_state = {
-        'index': 1,
-        'file': os.path.join(dirs['fused_in'], "Fusion_Cloroplastos_1.fasta")
+        'index': last,                                           # arrancamos donde lo dejamos
+        'file': os.path.join(dirs['fused_out'],
+                             f"Fusion_Cloroplastos_{last}.fasta")
     }
     if not os.path.exists(fusion_state['file']):
         sys.exit(f"Archivo de fusión inicial no encontrado: {fusion_state['file']}")
@@ -253,7 +263,15 @@ def main():
     os.replace(aln_temp, final_aln)
     print(f"Resultado final: {final_aln}")
 
+#    if shutil.which("seaview"):
+ #       subprocess.run(["seaview", final_aln])
+  #  else:
+   #     print("Seaview no encontrado; abre el fichero manualmente si lo deseas")
+
 if __name__ == "__main__":
+    main()
+
+
     main()
 
 
