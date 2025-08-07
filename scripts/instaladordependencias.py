@@ -5,10 +5,11 @@ from __future__ import annotations
 import argparse, json, os, shutil, subprocess, sys, zipfile
 from pathlib import Path
 from typing import Dict, List, Tuple
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT_DIR   = SCRIPT_DIR.parent
-LIB_DIR    = ROOT_DIR / "libreris"           # binarios + wrappers
-TMP_DIR    = ROOT_DIR / "temporalDocs"       # descargas / builds
+LIB_DIR    = ROOT_DIR / "libreris"        
+TMP_DIR    = ROOT_DIR / "temporalDocs"     
 
 TRIMMOMATIC_DIR     = LIB_DIR / "Trimmomatic-0.39"
 TRIMMOMATIC_JAR     = TRIMMOMATIC_DIR / "trimmomatic-0.39.jar"
@@ -34,7 +35,7 @@ VERIFY_CMDS: Dict[str, List[str]] = {
 
 PROC_SUPPORTED = sys.platform != "emscripten"
 
-# 4. FUNCIONES AUXILIARES
+
 def run_cmd(cmd: List[str], *, cwd: Path | None = None,
             accept_nonzero: bool = False) -> Tuple[bool, str]:
     """Ejecuta cmd y devuelve (ok, salida)."""
@@ -51,26 +52,8 @@ def run_cmd(cmd: List[str], *, cwd: Path | None = None,
     except (FileNotFoundError, OSError) as e:
         return False, str(e)
 
-# 4.1  Garantizar intérprete Python 3.8
-def _ensure_python38() -> Path | None:
-    """Devuelve ruta a python3.8, instalando entorno conda si es necesario."""
-    py38 = shutil.which("python3.8")
-    if py38:
-        return Path(py38)
 
-    # Crear entorno dedicado
-    env_name = "novowrap38"
-    print(f"[INFO] Creando entorno Conda '{env_name}' con python=3.8 …")
-    ok, out = run_cmd(["conda", "create", "-y", "-n", env_name, "python=3.8"])
-    if not ok:
-        print("[ERROR] No se pudo crear el entorno python3.8:", out)
-        return None
-    # Ruta al binario python dentro del nuevo entorno
-    conda_prefix = os.environ.get("CONDA_PREFIX", Path.home()/ "miniconda3")
-    py38_path = Path(conda_prefix) / "envs" / env_name / "bin" / "python"
-    return py38_path if py38_path.exists() else None
-
-# 4.2  Instalador Trimmomatic (ZIP oficial)
+#  Instalador Trimmomatic (ZIP oficial)
 TRIM_ZIP_URL = ("http://www.usadellab.org/cms/uploads/supplementary/"
                 "Trimmomatic/Trimmomatic-0.39.zip")
 
@@ -80,8 +63,6 @@ def install_trimmomatic_zip(force: bool = False) -> bool:
     if not PROC_SUPPORTED:
         print("[WARN] Sin subprocesos: Trimmomatic omitido.")
         return False
-
-    # --- descargar ZIP (sin curl) ---
     try:
         import urllib.request
         TMP_DIR.mkdir(parents=True, exist_ok=True)
@@ -91,7 +72,6 @@ def install_trimmomatic_zip(force: bool = False) -> bool:
     except Exception as e:
         print("[ERROR] Descarga fallida:", e)
         return False
-
 
     extract_dir = TMP_DIR / "trim_extract"
     shutil.rmtree(extract_dir, ignore_errors=True)
@@ -111,9 +91,6 @@ def install_trimmomatic_zip(force: bool = False) -> bool:
     if TRIMMOMATIC_JAR.exists():
         TRIMMOMATIC_JAR.chmod(0o755)
 
-    # Wrapper
-    # Si existe un enlace simbólico recursivo lo eliminamos para evitar
-    # «OSError: [Errno 40] Too many levels of symbolic links»
     if TRIMMOMATIC_WRAPPER.exists() or TRIMMOMATIC_WRAPPER.is_symlink():
         TRIMMOMATIC_WRAPPER.unlink()
 
@@ -125,41 +102,8 @@ def install_trimmomatic_zip(force: bool = False) -> bool:
     print("[OK] Trimmomatic preparado.")
     return True
 
-# 4.3  Instalador novowrap (Py 3.8 + pip)
-def install_novowrap_pip(force: bool = False) -> bool:
-    link = LIB_DIR / "novowrap"
-    if link.exists() and not force:
-        return True
 
-    py38 = _ensure_python38()
-    if not py38:
-        return False
-
-    env_bin = py38.parent          # .../envs/novowrap38/bin
-    pip_cmd = [str(py38), "-m", "pip"]
-
-    # upgrade pip
-    run_cmd(pip_cmd + ["install", "--upgrade", "pip", "--user"], accept_nonzero=True)
-    # instalar novowrap
-    ok, out = run_cmd(pip_cmd + ["install", "--user", "novowrap"])
-    if not ok:
-        print("[ERROR] pip no pudo instalar novowrap:", out); return False
-
-    exe = env_bin / "novowrap"
-    if not exe.exists():
-        exe = Path.home() / ".local" / "bin" / "novowrap"
-        if not exe.exists():
-            print("[ERROR] Executable novowrap no encontrado tras pip."); return False
-
-    # Enlazar en libreris/
-    LIB_DIR.mkdir(parents=True, exist_ok=True)
-    if link.exists() or link.is_symlink():
-        link.unlink()
-    link.symlink_to(exe.resolve())
-    print("[OK] novowrap instalado y enlazado.")
-    return True
-
-# 4.4  Instalador minimap2 (git + make)   ### MOD <<<
+# Instalar minimap2
 def install_minimap2_source(force: bool = False) -> bool:
     dest_src = LIB_DIR / "minimap2_src"
     bin_path = LIB_DIR / "minimap2"
@@ -185,21 +129,19 @@ def install_minimap2_source(force: bool = False) -> bool:
     built_bin = dest_src / "minimap2"
     if not built_bin.exists():
         print("[ERROR] Binario minimap2 no generado."); return False
-
-    # --- eliminar binario/symlink previo (aunque sea bucle recursivo) ---
     try:
         if bin_path.is_symlink() or bin_path.exists():
-            bin_path.unlink()  # funciona incluso con enlaces corruptos
+            bin_path.unlink() 
     except OSError:
-        # fallback: renombrar el antiguo en lugar de romper
         bin_path.rename(bin_path.with_suffix(".old"))
 
     shutil.copy2(built_bin, bin_path)
     bin_path.chmod(0o755)
     print("[OK] minimap2 compilado y disponible.")
-    return True                                           ### MOD >>>
+    return True                                           
 
-# 4.5  Instalador genérico conda
+
+# Instalar mafft con conda
 def conda_install(pkg: str, *, force: bool = False) -> bool:
     if not PROC_SUPPORTED:
         print(f"[WARN] Sin subprocesos: {pkg} omitido."); return False
@@ -215,7 +157,6 @@ def conda_install(pkg: str, *, force: bool = False) -> bool:
         canal, nombre = "bioconda", pkg
         cmd.extend(["-c", canal])
 
-    # --- Fuerza python=3.11 cuando se trate de samtools ---------------
     if nombre.startswith("samtools") and "python=3.11" not in cmd:
         cmd.append("python=3.11")
 
@@ -228,8 +169,8 @@ def conda_install(pkg: str, *, force: bool = False) -> bool:
     return ok
 
 
+# Instalar samtools
 def install_samtools_env(force: bool = False) -> bool:
-
     env_name = "samtools_env"
     conda_prefix = Path(os.environ.get("CONDA_PREFIX", Path.home() / "miniconda3"))
     env_dir = conda_prefix / "envs" / env_name
@@ -270,7 +211,58 @@ def install_samtools_env(force: bool = False) -> bool:
     return True
 
 
-# 4.6  Enlaces simbólicos
+# Entorno python3.8
+def _ensure_python38() -> Path | None:
+    """Devuelve ruta a python3.8, instalando entorno conda si es necesario."""
+    py38 = shutil.which("python3.8")
+    if py38:
+        return Path(py38)
+
+    env_name = "novowrap38"
+    print(f"[INFO] Creando entorno Conda '{env_name}' con python=3.8 …")
+    ok, out = run_cmd(["conda", "create", "-y", "-n", env_name, "python=3.8"])
+    if not ok:
+        print("[ERROR] No se pudo crear el entorno python3.8:", out)
+        return None
+    conda_prefix = os.environ.get("CONDA_PREFIX", Path.home()/ "miniconda3")
+    py38_path = Path(conda_prefix) / "envs" / env_name / "bin" / "python"
+    return py38_path if py38_path.exists() else None
+
+
+# Instalar novowrap
+def install_novowrap_pip(force: bool = False) -> bool:
+    link = LIB_DIR / "novowrap"
+    if link.exists() and not force:
+        return True
+
+    py38 = _ensure_python38()
+    if not py38:
+        return False
+
+    env_bin = py38.parent          
+    pip_cmd = [str(py38), "-m", "pip"]
+
+    run_cmd(pip_cmd + ["install", "--upgrade", "pip", "--user"], accept_nonzero=True)
+    ok, out = run_cmd(pip_cmd + ["install", "--user", "novowrap"])
+    if not ok:
+        print("[ERROR] pip no pudo instalar novowrap:", out); return False
+
+    exe = env_bin / "novowrap"
+    if not exe.exists():
+        exe = Path.home() / ".local" / "bin" / "novowrap"
+        if not exe.exists():
+            print("[ERROR] Executable novowrap no encontrado tras pip."); return False
+
+    # Enlazar en libreris/
+    LIB_DIR.mkdir(parents=True, exist_ok=True)
+    if link.exists() or link.is_symlink():
+        link.unlink()
+    link.symlink_to(exe.resolve())
+    print("[OK] novowrap instalado y enlazado.")
+    return True
+
+
+#  Enlaces simbólicos
 def _conda_env_bins() -> List[Path]:
     ok, out = run_cmd(["conda", "env", "list", "--json"])
     if not ok:
@@ -282,21 +274,15 @@ def _conda_env_bins() -> List[Path]:
     except json.JSONDecodeError:
         return []
 
+
 def symlink_if_exists(binary_name: str) -> bool:
-    """Crea enlace en libreris/ → bin real.
-    Si el ejecutable **ya está** dentro de libreris/ se deja tal cual para
-    evitar bucles de tipo «Too many levels of symbolic links»."""
 
-    # --- localizar binario real -------------------------------------------------
     path: str | None = shutil.which(binary_name)
-
-    # $CONDA_PREFIX/bin
     if not path and (pre := os.environ.get("CONDA_PREFIX")):
         p = Path(pre) / "bin" / binary_name
         if p.exists():
             path = str(p)
 
-    # Otros entornos conda
     if not path:
         for b in _conda_env_bins():
             p = b / binary_name
@@ -311,20 +297,18 @@ def symlink_if_exists(binary_name: str) -> bool:
     target = LIB_DIR / binary_name
     real   = Path(path).resolve()
 
-    # --- Evitar auto‑symlink (target == real) -----------------------------------
     if real == target.resolve():
-        # Ya es un fichero real en libreris/; no crear enlace.
         print(f"[OK] {binary_name} ya presente en libreris/ (sin enlace).")
         return True
 
-    # Crear/actualizar enlace
     if target.exists() or target.is_symlink():
         target.unlink()
     target.symlink_to(real)
     print(f"[OK] Enlace creado para {binary_name}")
     return True
 
-# 4.7  Verificación
+
+#  Verificación
 def verify(name: str) -> Tuple[bool, str]:
     if not PROC_SUPPORTED:
         return False, "Sin subprocesos."
@@ -347,7 +331,7 @@ def verify(name: str) -> Tuple[bool, str]:
     return run_cmd(cmd, accept_nonzero=True)
 
 
-# 5. FLUJO PRINCIPAL
+# FLUJO PRINCIPAL
 def main() -> None:
     parser = argparse.ArgumentParser(description="Instala/verifica dependencias.")
     parser.add_argument("--force", action="store_true",
@@ -372,8 +356,8 @@ def main() -> None:
                 ok = install_novowrap_pip(force=args.force)
             elif name == "minimap2":
                 ok = install_minimap2_source(force=args.force)
-            elif name == "samtools":                        # ← NUEVO
-                ok = install_samtools_env(force=args.force)   # ← NUEVO
+            elif name == "samtools":                        
+                ok = install_samtools_env(force=args.force)   
 
         # ----- conda ---------------------------------------------------------
         elif locator.startswith(CONDA_PREFIX):
@@ -414,11 +398,10 @@ def main() -> None:
     if not errores:
         print("Todo correcto. ✅")
 
+
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         print("\nInterrumpido por el usuario.")
-
-
 
