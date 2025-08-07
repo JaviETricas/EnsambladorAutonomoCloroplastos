@@ -5,12 +5,13 @@ import os
 import subprocess
 import time
 import sys
-import glob
+from instaladordependencias import _ensure_python38
+from datetime import datetime 
 from pathlib import Path
 
 # 1. Generamos rutas relativas para que sea portable.
-SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/Script
-ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
+SCRIPT_DIR = Path(__file__).resolve().parent            
+ROOT_DIR   = SCRIPT_DIR.parent                          
 LIB_DIR    = ROOT_DIR / "libreris"
 TMP_DIR    = ROOT_DIR / "temporalDocs"
 RES_DIR    = ROOT_DIR / "resultados"
@@ -59,7 +60,7 @@ with open(PAIRS_FILE, 'r') as f:
 		pairs.append((a, b))
 print(f"Cargado {len(pairs)} parejas desde {PAIRS_FILE}")
 
-# --- después de cargar `pairs` ---------------------------------------------
+# --- después de cargar pairs
 tally_results   : list[Path] = []
 trim_paired     : list[Path] = []
 trim_unpaired   : list[Path] = []
@@ -68,7 +69,11 @@ novowrap_results: list[Path] = []
 for idx, (f1, f2) in enumerate(pairs, start=1):
     print(f"\n=== PAREJA {idx}/{len(pairs)} ========================= \n")
     start_time = time.time()
-    # ── 1. TALLY ─────────────────────────────────────────────
+    hora_actual = datetime.now()
+    print(f"Hora de inicio: {hora_actual.hour:02d}:{hora_actual.minute:02d}")
+    
+    
+    # ── TALLY ─────────────────────────────────────────────
     base = Path(f1).stem[:-2]      # recorta el "_1"
     out1 = TALLY_DIR / f"{base}_1R.fastq.gz"
     out2 = TALLY_DIR / f"{base}_2R.fastq.gz"
@@ -85,7 +90,8 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
     tally_results.extend([out1, out2])
     print(f"  ✓ Tally completado en {time.time() - start_time:.1f}s\n")
 
-    # ── 2. TRIMMOMATIC ──────────────────────────────────────
+    
+    # ── TRIMMOMATIC ──────────────────────────────────────
     pep1 = TRIM_DIR / f"{base}_pareado_1.fastq.gz"
     upe1 = TRIM_DIR / f"{base}_unpareado_1.fastq.gz"
     pep2 = TRIM_DIR / f"{base}_pareado_2.fastq.gz"
@@ -93,7 +99,7 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
 
     print(f"[TRIM] {base}")
     cmd_trim = [
-        'java', '-jar', str(TRIMMOMATIC_JAR), 'PE', '-threads', '4', '-phred33',
+        'java', '-jar', str(TRIMMOMATIC_JAR), 'PE', '-threads', '16', '-phred33',
         out1, out2, pep1, upe1, pep2, upe2,
         f"ILLUMINACLIP:{TRIMMOMATIC_ADAPTERS}:2:30:10",
         'LEADING:3', 'TRAILING:3'
@@ -106,15 +112,23 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
     trim_unpaired.extend([upe1, upe2])
     print(f"  ✓ Trimmomatic completado en {time.time() - start_time:.1f}s\n")
 
-    # ── 3. NOVOWRAP ─────────────────────────────────────────
+
+    # ── NOVOWRAP ─────────────────────────────────────────
     out_dir = NOV_DIR / f"{base}_Novowrap"
     print(f"[NOVOwrap] {base}")
+
+
+    py38 = _ensure_python38()          # Path al intérprete 3.8 (o None si falla)
+    if py38 is None:                   # si no tenemos Python 3.8 abandonamos la pareja
+        print("  ⨯ No hay Python 3.8 disponible – se omite esta pareja.")
+        continue
+
     cmd_novo = [
-        "python", "-m", "novowrap",
-        '-input', pep1, pep2,
-        '-ref', str(CLORO_REF_GB),
-        '-out',  out_dir,
-        '-len_diff', '0.8', '-debug'
+        str(py38), "-m", "novowrap",   # ejecuta novowrap con ese intérprete
+        "-input", pep1, pep2,
+        "-ref",   str(CLORO_REF_GB),
+        "-out",   out_dir,
+        "-len_diff", "0.8", "-debug"
     ]
     proc = subprocess.run(cmd_novo, stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE, text=True)
@@ -133,11 +147,12 @@ for idx, (f1, f2) in enumerate(pairs, start=1):
         continue
     print(f"\nPipeline completado en {time.time()-start_time:.1f}s\n")
 
-    # ── 4. LIMPIEZA PARCIAL ─────────────────────────────────
+
+    # ── LIMPIEZA PARCIAL ─────────────────────────────────
     for tmp in (out1, out2, upe1, upe2):
         tmp.unlink(missing_ok=True)
 
-    # Fase 8. Selección de FASTAs generadas con NOVOwrap
+    # Selección de FASTAs generadas con NOVOwrap
     selection_script = Path(__file__).parent / "SeleccionNovowrap.py"
     # Nombre del .txt de salida que generará el script de selección
     output_list = Path("Errores_de_novowrap.txt")
@@ -176,3 +191,4 @@ else:
     print(f"[SELECT] Selección completada. FASTAs listados en: {output_list}")
 
 print("Pipeline completado.")
+
