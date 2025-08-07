@@ -201,7 +201,7 @@ def main():
     ap = argparse.ArgumentParser("Fusionador de cloroplastos + corrección TSV")
     ap.add_argument("--fasta", help="Archivo FASTA de cloroplasto")
     ap.add_argument("--tsv",   help="Archivo TSV con mutaciones")
-    ap.add_argument("--use-awk", action="store_true")
+    ap.add_argument("--use-awk", action="store_true", help="Usar awk para convertir FASTA a formato una línea")
     ap.add_argument("--strict-pairing", action="store_true", help="Emparejamiento estricto: solo parejas exactas FASTA↔TSV")
     # Nueva opción para el nombre de la especie
     ap.add_argument("--species", default="Hurdeum vulgare",
@@ -217,8 +217,8 @@ def main():
         'selection': os.path.join(temp, "Novowrapselection"),
         'tsv':        os.path.join(temp, "bam"),
         'oneline':    os.path.join(temp, "Oneline"),
-        'fused_in':   os.path.join(temp, "Fusionados_Cloroplastos"),
-        'fused_out':  os.path.join(ref ),
+        'fused_in':   os.path.join(ref ),
+        'fused_out':  os.path.join(root_dir, "Resultados" ),
         'alignment':  os.path.join(temp, "Alineacion"),
         'results':    os.path.join(root_dir, "Resultados"),
     }
@@ -244,7 +244,7 @@ def main():
         sys.exit(f"Archivo de fusión inicial no encontrado: {fusion_state['file']}")
 
     for fa, tsv in pairs:
-        process_pair(fa, tsv, oneline_fn, dirs, fusion_state)
+        process_pair(fa, tsv, oneline_fn, dirs, fusion_state, args.species)
 
     aln_temp = os.path.join(dirs['alignment'], f"Fusionado_Cloroplasto_{fusion_state['index']}.aln.fasta")
     run_mafft(fusion_state['file'], aln_temp)
@@ -252,11 +252,6 @@ def main():
     final_aln = os.path.join(dirs['results'], os.path.basename(aln_temp))
     os.replace(aln_temp, final_aln)
     print(f"Resultado final: {final_aln}")
-
-#    if shutil.which("seaview"):
- #       subprocess.run(["seaview", final_aln])
-  #  else:
-   #     print("Seaview no encontrado; abre el fichero manualmente si lo deseas")
 
 if __name__ == "__main__":
     main()
