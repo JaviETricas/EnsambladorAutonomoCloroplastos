@@ -79,7 +79,7 @@ def pair_fasta_tsv(fasta_dir: str, tsv_dir: str, strict: bool) -> List[Tuple[str
     return pairs
 
 
-def load_mutations(tsv_path: str) -> Dict[int, str]:
+def load_mutations(tsv_path: str) -> Dict[int, str]: # Carga mutaciones de un TSV de pileup.
 
     muts: Dict[int, str] = {}
 
@@ -135,36 +135,18 @@ def apply_mutations(fasta_in: str, fasta_out: str, muts: Dict[int, str]) -> None
         fo.write(header)
         fo.write("".join(seq) + "\n")
 
-def rename_headers(fasta_in: str, fasta_out: str, species: str) -> None:
-    """Reescribe las cabeceras de un FASTA con el formato:
-    >{species}, <longitud_secuencia>
-    donde *longitud_secuencia* es el número de caracteres de la secuencia
-    hasta la siguiente cabecera (o fin de archivo).
-    """
-    with open(fasta_in, encoding="utf-8", errors="replace") as fi, \
-         open(fasta_out, "w", encoding="utf-8") as fo:
-        seq_parts: List[str] = []
-        for line in fi:
-            if line.startswith(">"):
-                # Vuelca cualquier registro pendiente
-                if seq_parts:
-                    seq = "".join(seq_parts)
-                    fo.write(f">{species}, {len(seq)}\n")
-                    fo.write(seq + "\n")
-                    seq_parts.clear()
-                # Ignoramos la cabecera original: el nuevo nombre se escribirá
-                # cuando tengamos la longitud de la secuencia.
-            else:
-                seq_parts.append(line.strip())
-        # Último registro
-        if seq_parts:
-            seq = "".join(seq_parts)
-            fo.write(f">{species}, {len(seq)}\n")
-            fo.write(seq + "\n")
+
 
 def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state, species: str):
     base = os.path.splitext(os.path.basename(fa_path))[0]
+
+    name_hint = re.sub(r"^Option_\d+_", "", base)
+
+    name_hint = name_hint.split(".", 1)[0]
+
+
     tmp_oneline = os.path.join(dirs['oneline'], f"{base}_oneline.fasta")
+
 
     print(f"[1/4] {base}: generando oneline…")
     oneline_fn(fa_path, tmp_oneline)
@@ -177,7 +159,7 @@ def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state, sp
     # Renombrado de cabeceras
     renamed = os.path.join(dirs['oneline'], f"{base}_corr_renamed.fasta")
     print(f"[3/4] {base}: renombrando cabeceras…")
-    rename_headers(corrected, renamed, species)
+    rename_headers(corrected, renamed, species, name_hint)
 
     new_idx = fusion_state['index'] + 1
     fused_out = os.path.join(dirs['fused_out'], f"Fusion_Cloroplastos_{new_idx}.fasta")
@@ -188,7 +170,40 @@ def process_pair(fa_path: str, tsv_path: str, oneline_fn, dirs, fusion_state, sp
                 shutil.copyfileobj(fi, fo)
     fusion_state.update(index=new_idx, file=fused_out)
 
+def rename_headers(fasta_in: str, fasta_out: str, species: str, name_hint: str) -> None:
+    """Reescribe las cabeceras de un FASTA con el formato:
+    >{species}, <longitud_secuencia>
+    donde *longitud_secuencia* es el número de caracteres de la secuencia
+    hasta la siguiente cabecera (o fin de archivo).
+    """
+    with open(fasta_in, encoding="utf-8", errors="replace") as fi, \
+         open(fasta_out, "w", encoding="utf-8") as fo:
+        seq_parts: List[str] = []
+        for line in fi:
+            if line.startswith(">"):
+                if seq_parts:  # vuelca el registro previo
+                    seq = "".join(seq_parts)
+                    fo.write(f">{name_hint}, {species}, {len(seq)}\n")
+                    fo.write(seq + "\n")
+                    seq_parts.clear()
+                # ignoramos la cabecera original; escribimos la nueva cuando tengamos la longitud
+            else:
+                seq_parts.append(line.strip())
+        # último registro
+        if seq_parts:
+            seq = "".join(seq_parts)
+            fo.write(f">{name_hint}, {species}, {len(seq)}\n")
+            fo.write(seq + "\n")
 
+def alignment_has_excess_gaps(aln_path: str, max_gaps_per_line: int = 1000) -> bool:
+    """Devuelve True si alguna línea de secuencia tiene >max_gaps_per_line guiones."""
+    with open(aln_path, encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if not line or line[0] == '>':
+                continue
+            if line.count('-') > max_gaps_per_line:
+                return True
+    return False
 
 def run_mafft(in_fasta: str, out_fasta: str):
     print("[MAFFT] Ejecutando MAFFT…")
@@ -209,6 +224,10 @@ def main():
 
     args = ap.parse_args()
 
+    #Cogemos de cloroplasto_referencia el fasta y lo copiamos en resultados.
+    
+
+
     script_dir = os.path.dirname(os.path.realpath(__file__))
     root_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
     temp = os.path.join(root_dir, "temporalDocs")
@@ -225,8 +244,6 @@ def main():
     for d in ('oneline', 'fused_out', 'alignment', 'results'):
         os.makedirs(dirs[d], exist_ok=True)
 
-    oneline_fn = pick_oneline_backend(args.use_awk)
-
     if args.fasta and args.tsv:
         if args.fasta.endswith(".fai"):
             sys.exit("ERROR: especificaste un índice .fai; pasa el .fasta real")
@@ -236,6 +253,7 @@ def main():
         if not pairs:
             sys.exit("No se encontraron parejas FASTA↔TSV válidas")
 
+    oneline_fn = pick_oneline_backend(args.use_awk)
     # ── comprobar qué fusión existe ya ───────────────────────────────
     patron = os.path.join(dirs['fused_out'], "Fusion_Cloroplastos_*.fasta")
     existentes = glob.glob(patron)
@@ -259,19 +277,22 @@ def main():
     aln_temp = os.path.join(dirs['alignment'], f"Fusionado_Cloroplasto_{fusion_state['index']}.aln.fasta")
     run_mafft(fusion_state['file'], aln_temp)
 
-    final_aln = os.path.join(dirs['results'], os.path.basename(aln_temp))
-    os.replace(aln_temp, final_aln)
-    print(f"Resultado final: {final_aln}")
-
-#    if shutil.which("seaview"):
- #       subprocess.run(["seaview", final_aln])
-  #  else:
-   #     print("Seaview no encontrado; abre el fichero manualmente si lo deseas")
+    if alignment_has_excess_gaps(aln_temp, max_gaps_per_line=1000):
+        rejected_path = os.path.splitext(aln_temp)[0] + ".rejected.fasta"
+        i = 1
+        base_rej, ext_rej = os.path.splitext(rejected_path)
+        while os.path.exists(rejected_path):
+            rejected_path = f"{base_rej}.{i}{ext_rej}"
+            i += 1
+        os.replace(aln_temp, rejected_path)
+        print(f"[DESCARTADO] Alineamiento con >1000 '-' en alguna línea.\n"
+              f"Guardado en: {rejected_path}\n"
+              f"El archivo NO se moverá a Resultados.")
+    else:
+        final_aln = os.path.join(dirs['results'], os.path.basename(aln_temp))
+        os.replace(aln_temp, final_aln)
+        print(f"Resultado final: {final_aln}")
 
 if __name__ == "__main__":
     main()
-
-
-    main()
-
 
