@@ -10,8 +10,8 @@ from datetime import datetime
 from pathlib import Path
 
 # 1. Generamos rutas relativas para que sea portable.
-SCRIPT_DIR = Path(__file__).resolve().parent            
-ROOT_DIR   = SCRIPT_DIR.parent                          
+SCRIPT_DIR = Path(__file__).resolve().parent            # AutomatizerV01/Script
+ROOT_DIR   = SCRIPT_DIR.parent                          # AutomatizerV01
 LIB_DIR    = ROOT_DIR / "libreris"
 TMP_DIR    = ROOT_DIR / "temporalDocs"
 RES_DIR    = ROOT_DIR / "resultados"
