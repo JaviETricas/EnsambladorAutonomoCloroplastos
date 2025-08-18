@@ -117,6 +117,3 @@ if __name__ == '__main__':
     parser.add_argument('--fail', default=NOV_DIR, help='Directorio para mover resultados herroneos')
     args = parser.parse_args()
     main(root_dir=args.root, output_txt=args.output)
-
-
-
