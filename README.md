@@ -7,9 +7,11 @@ fastq.gz pareados que podra usar como ejemplo.
 
 El proceso total puede costar varias horas.
 
+
 ## Índice
 
 - [Descripción](#descripcion)
+
 - [Requisitos](#requisitos)
 - [Instalación](#instalacion)
 - [Uso general](#uso-general)
@@ -26,14 +28,25 @@ Esta herramienta lo que hace es juntar una serie de herramientas para realizar l
 del cloroplasto circular y alinearlo con un cloroplasto de referencia.
 
 Para ello se usan las siguientes herramientas: reaper, Trimmomatic, novowrap, samtools, minimap2, y mafft. 
-
 El programa a demas selecciona el fasta generado de novowrap con una mejor puntuacion con respecto al 
 cloroplasto de referencia, descarta los ensamblajes que se consideran erroneos dejando una lista con 
 estos para poder revisarlos manualmente y gracias a samtools se generara un tsv con los nucleotidos que pueden
 generar error, y corrige los fallos de estos.
 
 Por ultimo antes de alinear cambia el nombre al nombre de la especie + nombre del archivo + numero de bases del
-coting.
+coting, y corrige los errores basicos de nucleotidos por el proceso de mayoria, si alguna base esta en duda, se 
+selecciona la mayoria.
+
+Una vez Alineado todo, el programa revisara en secciones de 400 en 400pb que el k-mers sea correcto y si este 
+baja del umbral del 60% y la seccion es superior a 2000pb probara a invertir la seccion y volver a ensamblar para
+posteriormente elegir la cadena con un resultado mejor y guardar la otra en temporaldocs.
+
+<img width="1175" height="316" alt="Captura desde 2025-08-28 12-57-57" src="https://github.com/user-attachments/assets/7712b317-53b5-4d40-9a6d-035f78696869" />
+
+<img width="1114" height="316" alt="Captura desde 2025-08-28 12-58-57" src="https://github.com/user-attachments/assets/59a10905-e9d6-4927-b36b-2890be0f9570" />
+
+Esto se realiza por que las secciones IRa, IRb, y SSC se suelen voltear, a demas algunas veces el ensamblador voltea
+estas secciones sin querer y asi evitamos los errores que nos podria causar esto.
 
 ## Requisitos
 
