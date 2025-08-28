@@ -65,6 +65,11 @@ Para que el programa funcione correctamente en la actualidad se necesita:
  - Bioconda
  - Comandos de Github
 
+El programa tiene un archivo llamado Fusion_Cloroplasto_1.fasta y uno llamado sequence_cloroplasto.gb en la carpeta
+/cloroplasto_referencia este es el cloroplasto de Hordeum vulgare, en caso de querer usar otra planta de referencia,
+solo tienes que guardar tu .fasta y .gb de referencia con los mismos nombres en esta carpeta, y el programa elegira
+automaticamente el nuevo fasta para los proximos trabajos.
+
 ## Instalacion
 
 La herramienta actualmente no se encuentra fuera de github, por lo que a la hora de instalar solo se puede 
