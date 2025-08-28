@@ -17,6 +17,7 @@ El proceso total puede costar varias horas.
 - [Características avanzadas](#caracteristicas-avanzadas)
   - [Argumentos de scripts](#argumentos-de-scripts)
 - [Limitaciones](#limitaciones)
+- [Bibliografia](#bibliografia)
 
 ## Descripcion
 
@@ -97,6 +98,27 @@ En la actualidad usa un cloroplasto de hurdeum vulgare como referencia para reco
 esto debes descargar otro cloroplasto de referencia y guardarlo en la carpeta cloroplasto_referencia en formato gb
 
 ### Argumentos de scripts
+
+  **cargadordearchivos**
+
+    ``` 
+    # Nombre cientifico de la especie para el fasta
+    ./cargadordearchivos.py --species "name sp"
+
+
+    ``` 
+    # Borra los bam al ser archivos pesados
+    ./cargadordearchivos.py --dellbam
+
+    ``` 
+    # vacia la papelera de los documentos borrados
+    ./cargadordearchivos.py --dell
+
+    ``` 
+    # Fuerza la reinstalacion de las librerias
+    ./cargadordearchivos.py --force
+
+
   **instaladordependecias**
   
     ``` 
@@ -125,4 +147,15 @@ especie por otra diferente.
 
 El programa busca inversiones y las alinea con el consenso, y te guarda la no invertida para la filogenia, pero no
 detecta a que genes pertenece ni que seccion o si es un fallo del ensamblador o una mutacion del cloroplasto.
+
+## Bibliografia
+
+Sancho, R., Cantalapiedra, C. P., López‐Alvarez, D., Gordon, S. P., Vogel, J. P., Catalán, P., & Contreras‐Moreira, B. (2017). Comparative plastome genomics and phylogenomics of Brachypodium: flowering time signatures, introgression and recombination in recently diverged ecotypes. New Phytologist, 218(4), 1631-1644. https://doi.org/10.1111/nph.14926
+
+Gong, C., Huang, Y., Liu, M., Zhou, Y., Xu, Y., Mohammed, N., Qiao, X., Zuccolo, A., Xie, W., Wing, R. A., Zhang, J., Zhou, F., & Lin, Y. (2025). Continuous infiltration and evolutionary trajectory of nuclear organelle DNA inOryza. Genome Research. https://doi.org/10.1101/gr.279609.124
+
+Wu P, Xu C, Chen H, Yang J, Zhang X, Zhou S. NOVOWrap: An automated solution for plastid genome assembly and structure standardization. Mol Ecol Resour. 2021 Aug;21(6):2177-2186. doi: 10.1111/1755-0998.13410. Epub 2021 May 25. PMID: 33934526.
+
+Greiner S, Lehwark P, Bock R. OrganellarGenomeDRAW (OGDRAW) version 1.3.1: expanded toolkit for the graphical visualization of organellar genomes. Nucleic Acids Res. 2019 Jul 2;47(W1):W59-W64. doi: 10.1093/nar/gkz238. PMID: 30949694; PMCID: PMC6602502.
+
 
