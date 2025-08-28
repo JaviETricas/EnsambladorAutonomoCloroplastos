@@ -37,16 +37,24 @@ Por ultimo antes de alinear cambia el nombre al nombre de la especie + nombre de
 coting, y corrige los errores basicos de nucleotidos por el proceso de mayoria, si alguna base esta en duda, se 
 selecciona la mayoria.
 
+<img width="1175" height="316" alt="Captura desde 2025-08-28 12-57-57" src="https://github.com/user-attachments/assets/7712b317-53b5-4d40-9a6d-035f78696869" />
+
 Una vez Alineado todo, el programa revisara en secciones de 400 en 400pb que el k-mers sea correcto y si este 
 baja del umbral del 60% y la seccion es superior a 2000pb probara a invertir la seccion y volver a ensamblar para
 posteriormente elegir la cadena con un resultado mejor y guardar la otra en temporaldocs.
 
-<img width="1175" height="316" alt="Captura desde 2025-08-28 12-57-57" src="https://github.com/user-attachments/assets/7712b317-53b5-4d40-9a6d-035f78696869" />
-
 <img width="1114" height="316" alt="Captura desde 2025-08-28 12-58-57" src="https://github.com/user-attachments/assets/59a10905-e9d6-4927-b36b-2890be0f9570" />
 
 Esto se realiza por que las secciones IRa, IRb, y SSC se suelen voltear, a demas algunas veces el ensamblador voltea
-estas secciones sin querer y asi evitamos los errores que nos podria causar esto.
+estas secciones sin querer y asi evitamos los errores que nos podria causar esto. Como se guardan los archivos bam 
+asociados a cada fasta, podeis comprovar de manera facil y rapida con algun visualizador si el error es por el ensambla-
+dor o si se da por una inversion natural.
+
+<img width="621" height="369" alt="Captura desde 2025-08-28 13-17-18" src="https://github.com/user-attachments/assets/79f30d12-08ef-468b-b37c-6f0485d5bd5d" />
+
+Aqui podemos ver como una seccion a sido ensamblada con un MAPQ de 0, tras coger el fasta corregido por el alineador,
+esta seccion desaparece.
+
 
 ## Requisitos
 
