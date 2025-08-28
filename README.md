@@ -1,5 +1,6 @@
 ## EnsambladorAutonomoCloroplastos.
-[![PyPI version](https://img.shields.io/pypi/v/numpy)](https://pypi.org/project/numpy) [![CI](https://github.com/JaviETricas/EnsambladorAutonomoCloroplastos/actions/workflows/ci.yml/badge.svg)](https://github.com/JaviETricas/EnsambladorAutonomoCloroplastos/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/numpy)](https://pypi.org/project/numpy) 
+[![CI](https://github.com/JaviETricas/EnsambladorAutonomoCloroplastos/actions/workflows/ci.yml/badge.svg)](https://github.com/JaviETricas/EnsambladorAutonomoCloroplastos/actions/workflows/ci.yml)
 
 
 Para una comprobacion rapida, use el argumento --test y descargara una carpeta llamada test con unos archivos 
