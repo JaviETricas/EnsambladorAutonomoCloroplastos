@@ -169,10 +169,7 @@ scripts por separado. Tampoco dispone de portabilidad total a windows.
 
 Si una herramienta falla con una pareja de datos, no existen caminos secundarios para corregir el problema.
 
-Otra limitacion es a la hora de nombrar los fasta, aun no esta añadido un argumento para cambiar el nombre de la 
-especie por otra diferente.
-
-El programa busca inversiones y las alinea con el consenso, y te guarda la no invertida para la filogenia, pero no
+El programa busca inversiones y las alinea con el consenso, y corrige las mutaciones pero no
 detecta a que genes pertenece ni que seccion o si es un fallo del ensamblador o una mutacion del cloroplasto.
 
 ## Bibliografia
